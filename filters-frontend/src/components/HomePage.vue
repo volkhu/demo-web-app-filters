@@ -31,14 +31,18 @@
         </template>
       </v-simple-table>
     </v-card>
+    <add-filter-dialog v-show="isAddFilterDialogShown" class="mt-3" />
   </v-container>
 </template>
 
 <script>
-export default {
-  name: "HomePage",
+import AddFilterDialog from "./AddFilterDialog.vue";
 
+export default {
+  components: { AddFilterDialog },
   data: () => ({
+    isAddFilterDialogShown: false,
+
     filters: [
       {
         name: "test-filter-1",
@@ -60,7 +64,7 @@ export default {
 
   methods: {
     openAddFilterDialog() {
-      alert("openAddFilterDialog");
+      this.isAddFilterDialogShown = true;
     },
   },
 };
