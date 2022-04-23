@@ -1,11 +1,15 @@
 <template>
-  <v-container>
+  <v-container style="max-width: 1200px !important">
     <v-card>
       <v-card-title>
         <v-row>
-          <v-col><h3>Filters</h3></v-col>
+          <v-col>Filters</v-col>
           <v-col class="text-right">
-            <v-btn color="primary" @click="openAddFilterDialog">
+            <v-btn
+              color="primary"
+              @click="openAddFilterDialog"
+              :disabled="isAddFilterDialogShown"
+            >
               ADD FILTER
             </v-btn>
           </v-col>
@@ -31,7 +35,11 @@
         </template>
       </v-simple-table>
     </v-card>
-    <add-filter-dialog v-show="isAddFilterDialogShown" class="mt-3" />
+    <add-filter-dialog
+      class="mt-3"
+      :isShown="isAddFilterDialogShown"
+      @update:isShown="isAddFilterDialogShown = $event"
+    />
   </v-container>
 </template>
 
@@ -63,6 +71,9 @@ export default {
   }),
 
   methods: {
+    /**
+     * Open the dialog that allows the user to define new filters.
+     */
     openAddFilterDialog() {
       this.isAddFilterDialogShown = true;
     },
