@@ -26,10 +26,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in filters" :key="item.name">
-              <td>{{ item.name }}</td>
-              <td>{{ item.criteria }}</td>
-              <td>{{ item.selection }}</td>
+            <tr v-for="filter in filters" :key="filter.name">
+              <td>{{ filter.name }}</td>
+              <td>
+                <!-- List all criteria as bullet points here -->
+                <ul class="pl-4 pt-2 pb-2">
+                  <li v-for="criteria in filter.criteria" :key="criteria.id">
+                    {{ criteria.criteriaType }}
+                    {{ criteria.criteriaOperator }}
+                    {{ criteria.criteriaValue }}
+                  </li>
+                </ul>
+              </td>
+              <td>{{ filter.selection }}</td>
             </tr>
           </tbody>
         </template>
@@ -54,19 +63,52 @@ export default {
 
     filters: [
       {
-        name: "test-filter-1",
-        criteria: "filter criteria goes here",
-        selection: "selection 2",
+        name: "Test Filter 1",
+        criteria: [
+          {
+            id: 0,
+            criteriaType: "Amount",
+            criteriaOperator: ">=",
+            criteriaValue: "5",
+          },
+          {
+            id: 1,
+            criteriaType: "Title",
+            criteriaOperator: "starts with",
+            criteriaValue: "asbf",
+          },
+          {
+            id: 2,
+            criteriaType: "Title",
+            criteriaOperator: "ends with",
+            criteriaValue: "kdege",
+          },
+        ],
+        selection: "Selection 1",
       },
       {
-        name: "test-filter-2",
-        criteria: "filter criteria goes here",
-        selection: "selection 1",
-      },
-      {
-        name: "test-filter-3",
-        criteria: "filter criteria goes here",
-        selection: "selection 3",
+        name: "Test Filter 2",
+        criteria: [
+          {
+            id: 0,
+            criteriaType: "Amount",
+            criteriaOperator: "==",
+            criteriaValue: "1",
+          },
+          {
+            id: 1,
+            criteriaType: "Title",
+            criteriaOperator: "starts with",
+            criteriaValue: "jkvev",
+          },
+          {
+            id: 2,
+            criteriaType: "Title",
+            criteriaOperator: "ends with",
+            criteriaValue: "821h",
+          },
+        ],
+        selection: "Selection 2",
       },
     ],
   }),
