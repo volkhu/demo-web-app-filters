@@ -36,15 +36,16 @@
       </v-simple-table>
     </v-card>
     <add-filter-dialog
+      v-if="isAddFilterDialogShown"
       class="mt-3"
-      :isShown="isAddFilterDialogShown"
-      @update:isShown="isAddFilterDialogShown = $event"
+      @close="onAddFilterDialogClosed"
+      @save="onAddFilterDialogSaved"
     />
   </v-container>
 </template>
 
 <script>
-import AddFilterDialog from "./AddFilterDialog.vue";
+import AddFilterDialog from "@/components/AddFilterDialog.vue";
 
 export default {
   components: { AddFilterDialog },
@@ -72,10 +73,30 @@ export default {
 
   methods: {
     /**
+     * Fetch existing filters from the back end.
+     */
+    loadFilters() {},
+
+    /**
      * Open the dialog that allows the user to define new filters.
      */
     openAddFilterDialog() {
       this.isAddFilterDialogShown = true;
+    },
+
+    /**
+     * Just hide the add filter dialog if user decided to close it.
+     */
+    onAddFilterDialogClosed() {
+      this.isAddFilterDialogShown = false;
+    },
+
+    /**
+     * Close the add filter dialog and reload the filter list since the user added a new filter.
+     */
+    onAddFilterDialogSaved() {
+      this.isAddFilterDialogShown = false;
+      this.loadFilters();
     },
   },
 };

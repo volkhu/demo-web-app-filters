@@ -1,5 +1,5 @@
 <template>
-  <v-card v-show="isShown">
+  <v-card>
     <v-card-title class="pb-1">
       <v-row>
         <v-col>Add Filter</v-col>
@@ -48,7 +48,23 @@
           <v-col class="ma-0 pa-0">
             <v-container>
               <!-- Inner criteria rows -->
-              <v-row>
+              <v-row
+                v-for="criteriaRow in criteriaRows"
+                v-bind:key="criteriaRow.id"
+              >
+                <!-- Criteria type -->
+                <v-col>
+                  <v-select
+                    :items="criteriaTypes"
+                    v-model="criteriaRow.criteriaType"
+                    outlined
+                    dense
+                    hide-details="auto"
+                    class="pt-1"
+                  ></v-select>
+                </v-col>
+
+                <!-- Criteria comparison operator -->
                 <v-col>
                   <v-select
                     :items="criteriaTypes"
@@ -58,6 +74,8 @@
                     class="pt-1"
                   ></v-select>
                 </v-col>
+
+                <!-- Criteria comparison value -->
                 <v-col>
                   <v-select
                     :items="criteriaTypes"
@@ -67,17 +85,16 @@
                     class="pt-1"
                   ></v-select>
                 </v-col>
-                <v-col>
-                  <v-select
-                    :items="criteriaTypes"
-                    outlined
-                    dense
-                    hide-details="auto"
-                    class="pt-1"
-                  ></v-select>
-                </v-col>
+
+                <!-- Delete criteria button (disable if there is only one last criteria left) -->
                 <v-col cols="1">
-                  <v-btn icon class="mt-1"><v-icon>mdi-delete</v-icon></v-btn>
+                  <v-btn
+                    icon
+                    class="mt-1"
+                    :disabled="criteriaRows.length == 1"
+                    @click="deleteCriteriaRow(criteriaRow.id)"
+                    ><v-icon>mdi-delete</v-icon></v-btn
+                  >
                 </v-col>
               </v-row>
 
@@ -129,7 +146,6 @@
               style="width: 120px"
               class="ml-5"
               type="submit"
-              @click="addCriteriaRow"
               >SAVE
             </v-btn>
           </v-col>
@@ -140,31 +156,62 @@
 </template>
 
 <script>
-export default {
-  props: ["isShown"],
+import _ from "lodash";
 
+export default {
   data: () => ({
     filterName: "",
     radioSelection: "1",
 
     criteriaTypes: ["Amount", "Title", "Date"],
+
+    criteriaRows: [],
   }),
 
   methods: {
     /**
-     * Tell the parent component of this component's visibility status.
+     * Close this dialog by notifying the parent component as such.
+     * Called when either the dialog "close" or "X" button has been pressed.
      */
-    setIsShown(value) {
-      this.$emit("update:isShown", value);
-    },
-
     closeAddFilterDialog() {
-      this.setIsShown(false);
+      this.$emit("close");
     },
 
-    addCriteriaRow() {},
+    /**
+     * Add a new criteria to the list with default values. Called either by the
+     * user by clicking the "add row" button or by the system when the dialog
+     * is first created (to create the initial criteria).
+     */
+    addCriteriaRow() {
+      this.criteriaRows.push({
+        id: _.uniqueId(), // give this row an unique id for Vue v-for loop
+        criteriaType: "Amount",
+        criteriaOperator: "",
+        criteriaValue: "",
+      });
+    },
 
-    saveNewFilter() {},
+    /**
+     * Delete an element from the criteria array.
+     */
+    deleteCriteriaRow(rowId) {
+      this.criteriaRows = this.criteriaRows.filter(
+        (criteriaRow) => criteriaRow.id != rowId
+      );
+    },
+
+    /**
+     * Save the new filter and its data to the back end and notify the parent component.
+     */
+    saveNewFilter() {
+      console.log(JSON.stringify(this.criteriaRows));
+      this.$emit("save");
+    },
+  },
+
+  mounted() {
+    this.addCriteriaRow(); // there must be at least 1 criteria so add it when the component is initialized
+    console.log("MOUNTED");
   },
 };
 </script>
