@@ -51,7 +51,7 @@
               <!-- Inner criteria rows -->
               <v-row
                 v-for="criteria in filter.criteria"
-                v-bind:key="criteria.id"
+                v-bind:key="criteria.vueId"
               >
                 <!-- Criteria type -->
                 <v-col>
@@ -62,7 +62,7 @@
                     dense
                     hide-details="auto"
                     class="pt-1"
-                    @change="criteriaTypeChanged(criteria.id)"
+                    @change="criteriaTypeChanged(criteria.vueId)"
                     :disabled="savingNewFilter"
                   ></v-select>
                 </v-col>
@@ -129,7 +129,7 @@
                     icon
                     class="mt-1"
                     :disabled="filter.criteria.length == 1 || savingNewFilter"
-                    @click="deleteCriteria(criteria.id)"
+                    @click="deleteCriteria(criteria.vueId)"
                     ><v-icon>mdi-delete</v-icon></v-btn
                   >
                 </v-col>
@@ -248,13 +248,13 @@ export default {
      */
     addCriteria() {
       this.filter.criteria.push({
-        id: _.uniqueId(), // give this criteria an unique id for Vue v-for loop
+        vueId: _.uniqueId(), // give this criteria an unique id for Vue v-for loop
         type: "Amount",
       });
 
       // set initial criteria operator and value depending on the type
       this.criteriaTypeChanged(
-        this.filter.criteria[this.filter.criteria.length - 1].id
+        this.filter.criteria[this.filter.criteria.length - 1].vueId
       );
     },
 
@@ -264,7 +264,7 @@ export default {
      */
     criteriaTypeChanged(criteriaId) {
       var index = this.filter.criteria.findIndex(
-        (criteria) => criteria.id == criteriaId
+        (criteria) => criteria.vueId == criteriaId
       );
       var newType = this.filter.criteria[index].type;
 
@@ -278,7 +278,7 @@ export default {
      */
     deleteCriteria(rowId) {
       this.filter.criteria = this.filter.criteria.filter(
-        (criteria) => criteria.id != rowId
+        (criteria) => criteria.vueId != rowId
       );
     },
 
@@ -289,10 +289,10 @@ export default {
       this.savingNewFilter = true;
 
       try {
-        await axios.post("/filters/add", this.filter);
+        await axios.post("/filters", this.filter);
         this.$emit("save");
       } catch (error) {
-        alert(`Cannot save project. ${error}`);
+        alert(`Cannot save filter. ${error}`);
       }
 
       this.savingNewFilter = false;
