@@ -77,17 +77,44 @@
                   ></v-select>
                 </v-col>
 
-                <!-- Criteria comparison value -->
+                <!-- Criteria comparison value (different input type depending on selected criteria type) -->
                 <v-col>
+                  <!-- Number input for "Amount" criteria type -->
                   <v-text-field
+                    v-if="criteriaRow.criteriaType == 'Amount'"
+                    v-model="criteriaRow.criteriaValue"
+                    type="number"
                     outlined
                     dense
                     hide-details="auto"
                     required
                     maxlength="64"
                     class="pt-1"
-                    v-model="criteriaRow.criteriaValue"
                   ></v-text-field>
+
+                  <!-- Text input for "Title" criteria type -->
+                  <v-text-field
+                    v-if="criteriaRow.criteriaType == 'Title'"
+                    v-model="criteriaRow.criteriaValue"
+                    outlined
+                    dense
+                    hide-details="auto"
+                    required
+                    maxlength="64"
+                    class="pt-1"
+                  ></v-text-field>
+
+                  <!-- Date picker input for "Date" criteria type (also update datepicker
+                  instantly on selection with @change event since we are using it on its
+                  own without an accompanying text field -->
+                  <v-date-picker
+                    v-if="criteriaRow.criteriaType == 'Date'"
+                    v-model="criteriaRow.criteriaValue"
+                    class="pt-1"
+                    show-current="true"
+                    first-day-of-week="1"
+                    @change="$forceUpdate()"
+                  ></v-date-picker>
                 </v-col>
 
                 <!-- Delete criteria button (disable if there is only one last criteria left) -->
@@ -173,6 +200,11 @@ export default {
       Title: ["starts with", "equals", "contains", "ends with"],
       Date: ["from", "until"],
     },
+    criteriaDefaultValues: {
+      Amount: 0,
+      Title: "",
+      Date: new Date().toJSON().substr(0, 10), // set the date picker to today as default
+    },
 
     criteriaRows: [],
   }),
@@ -213,9 +245,11 @@ export default {
       );
       var newType = this.criteriaRows[rowIndex].criteriaType;
 
+      // reset new criteria operator and default value based on the new type
       this.criteriaRows[rowIndex].criteriaOperator =
         this.criteriaOperators[newType][0];
-      this.criteriaRows[rowIndex].criteriaValue = 0;
+      this.criteriaRows[rowIndex].criteriaValue =
+        this.criteriaDefaultValues[newType];
     },
 
     /**
@@ -238,7 +272,6 @@ export default {
 
   mounted() {
     this.addCriteriaRow(); // there must be at least 1 criteria so add it when the component is initialized
-    console.log("MOUNTED");
   },
 };
 </script>
