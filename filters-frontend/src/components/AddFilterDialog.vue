@@ -61,13 +61,15 @@
                     dense
                     hide-details="auto"
                     class="pt-1"
+                    @change="criteriaTypeChanged(criteriaRow.id)"
                   ></v-select>
                 </v-col>
 
                 <!-- Criteria comparison operator -->
                 <v-col>
                   <v-select
-                    :items="criteriaTypes"
+                    :items="criteriaOperators[criteriaRow.criteriaType]"
+                    v-model="criteriaRow.criteriaOperator"
                     outlined
                     dense
                     hide-details="auto"
@@ -77,13 +79,15 @@
 
                 <!-- Criteria comparison value -->
                 <v-col>
-                  <v-select
-                    :items="criteriaTypes"
+                  <v-text-field
                     outlined
                     dense
                     hide-details="auto"
+                    required
+                    maxlength="64"
                     class="pt-1"
-                  ></v-select>
+                    v-model="criteriaRow.criteriaValue"
+                  ></v-text-field>
                 </v-col>
 
                 <!-- Delete criteria button (disable if there is only one last criteria left) -->
@@ -164,6 +168,11 @@ export default {
     radioSelection: "1",
 
     criteriaTypes: ["Amount", "Title", "Date"],
+    criteriaOperators: {
+      Amount: ["greater than", "equals", "less than"],
+      Title: ["starts with", "equals", "contains", "ends with"],
+      Date: ["from", "until"],
+    },
 
     criteriaRows: [],
   }),
@@ -186,9 +195,27 @@ export default {
       this.criteriaRows.push({
         id: _.uniqueId(), // give this row an unique id for Vue v-for loop
         criteriaType: "Amount",
-        criteriaOperator: "",
-        criteriaValue: "",
       });
+
+      // set initial criteria operator and value depending on the type
+      this.criteriaTypeChanged(
+        this.criteriaRows[this.criteriaRows.length - 1].id
+      );
+    },
+
+    /**
+     * The criteria type of a row has been changed. Update available criteria
+     * operators and values.
+     */
+    criteriaTypeChanged(rowId) {
+      var rowIndex = this.criteriaRows.findIndex(
+        (criteriaRow) => criteriaRow.id == rowId
+      );
+      var newType = this.criteriaRows[rowIndex].criteriaType;
+
+      this.criteriaRows[rowIndex].criteriaOperator =
+        this.criteriaOperators[newType][0];
+      this.criteriaRows[rowIndex].criteriaValue = 0;
     },
 
     /**
