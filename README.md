@@ -25,6 +25,11 @@ Demo web application displaying a list of user defined filters saved in an SQL d
 * Support modal dialog mode
 * Fix dialog width, allow user to resize height and add a scrollbar
 
+# Usage
+Front-end: `npm install` and `npm run serve` in the front-end folder to start the dev server
+
+Back-end: install dependencies via Maven and run Spring Boot application
+
 # Technologies / tools used
 Front-end: Visual Studio Code, Vue.js v2, Vuetify, axios
 
