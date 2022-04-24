@@ -289,7 +289,7 @@ export default {
       this.savingNewFilter = true;
 
       try {
-        await axios.post("/addFilter", this.filter);
+        await axios.post("/filters/add", this.filter);
         this.$emit("save");
       } catch (error) {
         alert(`Cannot save project. ${error}`);

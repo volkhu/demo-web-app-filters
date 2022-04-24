@@ -43,6 +43,10 @@
           </tbody>
         </template>
       </v-simple-table>
+      <v-progress-linear
+        indeterminate
+        v-show="areFiltersLoading"
+      ></v-progress-linear>
     </v-card>
     <add-filter-dialog
       v-if="isAddFilterDialogShown"
@@ -55,69 +59,33 @@
 
 <script>
 import AddFilterDialog from "@/components/AddFilterDialog.vue";
+import axios from "axios";
 
 export default {
   components: { AddFilterDialog },
   data: () => ({
     isAddFilterDialogShown: false,
+    areFiltersLoading: true,
 
-    filters: [
-      {
-        name: "Test Filter 1",
-        criteria: [
-          {
-            id: 0,
-            type: "Amount",
-            operator: "greater than",
-            value: "5",
-          },
-          {
-            id: 1,
-            type: "Title",
-            operator: "starts with",
-            value: "asbf",
-          },
-          {
-            id: 2,
-            type: "Title",
-            operator: "ends with",
-            value: "kdege",
-          },
-        ],
-        selection: "Selection 1",
-      },
-      {
-        name: "Test Filter 2",
-        criteria: [
-          {
-            id: 0,
-            type: "Amount",
-            operator: "less than",
-            value: "1",
-          },
-          {
-            id: 1,
-            type: "Title",
-            operator: "starts with",
-            value: "jkvev",
-          },
-          {
-            id: 2,
-            type: "Title",
-            operator: "ends with",
-            value: "821h",
-          },
-        ],
-        selection: "Selection 2",
-      },
-    ],
+    filters: [],
   }),
 
   methods: {
     /**
      * Fetch existing filters from the back end.
      */
-    loadFilters() {},
+    async loadFilters() {
+      this.areFiltersLoading = true;
+
+      try {
+        const filtersResponse = await axios.get("/filters");
+        this.filters = filtersResponse.data;
+      } catch (error) {
+        alert(`Cannot load filters. ${error}`);
+      }
+
+      this.areFiltersLoading = false;
+    },
 
     /**
      * Open the dialog that allows the user to define new filters.
@@ -140,6 +108,10 @@ export default {
       this.isAddFilterDialogShown = false;
       this.loadFilters();
     },
+  },
+
+  mounted() {
+    this.loadFilters();
   },
 };
 </script>
