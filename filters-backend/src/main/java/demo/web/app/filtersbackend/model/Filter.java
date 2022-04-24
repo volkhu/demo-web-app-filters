@@ -1,16 +1,16 @@
 package demo.web.app.filtersbackend.model;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
-public class FilterEntity {
+public class Filter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "filterEntity")
-    private Set<CriteriaEntity> criteriaEntities;
+    @OneToMany(mappedBy = "filter")
+    private List<Criterion> criteria;
     private String selection;
 
     public Long getId() {
@@ -35,5 +35,13 @@ public class FilterEntity {
 
     public void setSelection(String selection) {
         this.selection = selection;
+    }
+
+    public List<Criterion> getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(List<Criterion> criteria) {
+        this.criteria = criteria;
     }
 }
