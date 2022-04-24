@@ -28,7 +28,7 @@
                     required
                     maxlength="64"
                     class="pt-1"
-                    v-model="filterName"
+                    v-model="filter.name"
                   ></v-text-field>
                 </v-col>
                 <!-- Some empty cols to align this row's name input box with next row's criteria input boxes -->
@@ -49,27 +49,27 @@
             <v-container>
               <!-- Inner criteria rows -->
               <v-row
-                v-for="criteriaRow in criteriaRows"
-                v-bind:key="criteriaRow.id"
+                v-for="criteria in filter.criteria"
+                v-bind:key="criteria.id"
               >
                 <!-- Criteria type -->
                 <v-col>
                   <v-select
                     :items="criteriaTypes"
-                    v-model="criteriaRow.criteriaType"
+                    v-model="criteria.type"
                     outlined
                     dense
                     hide-details="auto"
                     class="pt-1"
-                    @change="criteriaTypeChanged(criteriaRow.id)"
+                    @change="criteriaTypeChanged(criteria.id)"
                   ></v-select>
                 </v-col>
 
-                <!-- Criteria comparison operator -->
+                <!-- Criteria operator -->
                 <v-col>
                   <v-select
-                    :items="criteriaOperators[criteriaRow.criteriaType]"
-                    v-model="criteriaRow.criteriaOperator"
+                    :items="criteriaOperators[criteria.type]"
+                    v-model="criteria.operator"
                     outlined
                     dense
                     hide-details="auto"
@@ -77,12 +77,12 @@
                   ></v-select>
                 </v-col>
 
-                <!-- Criteria comparison value (different input type depending on selected criteria type) -->
+                <!-- Criteria value (different input type depending on selected criteria type) -->
                 <v-col>
                   <!-- Number input for "Amount" criteria type -->
                   <v-text-field
-                    v-if="criteriaRow.criteriaType == 'Amount'"
-                    v-model="criteriaRow.criteriaValue"
+                    v-if="criteria.type == 'Amount'"
+                    v-model="criteria.value"
                     type="number"
                     outlined
                     dense
@@ -94,8 +94,8 @@
 
                   <!-- Text input for "Title" criteria type -->
                   <v-text-field
-                    v-if="criteriaRow.criteriaType == 'Title'"
-                    v-model="criteriaRow.criteriaValue"
+                    v-if="criteria.type == 'Title'"
+                    v-model="criteria.value"
                     outlined
                     dense
                     hide-details="auto"
@@ -108,8 +108,8 @@
                   instantly on selection with @change event since we are using it on its
                   own without an accompanying text field -->
                   <v-date-picker
-                    v-if="criteriaRow.criteriaType == 'Date'"
-                    v-model="criteriaRow.criteriaValue"
+                    v-if="criteria.type == 'Date'"
+                    v-model="criteria.value"
                     class="pt-1"
                     show-current="true"
                     first-day-of-week="1"
@@ -122,8 +122,8 @@
                   <v-btn
                     icon
                     class="mt-1"
-                    :disabled="criteriaRows.length == 1"
-                    @click="deleteCriteriaRow(criteriaRow.id)"
+                    :disabled="filter.criteria.length == 1"
+                    @click="deleteCriteria(criteria.id)"
                     ><v-icon>mdi-delete</v-icon></v-btn
                   >
                 </v-col>
@@ -132,7 +132,7 @@
               <!-- Add criteria button inner row -->
               <v-row>
                 <v-col class="text-center">
-                  <v-btn color="secondary" @click="addCriteriaRow">
+                  <v-btn color="secondary" @click="addCriteria">
                     <v-icon class="mr-2">mdi-plus</v-icon>ADD ROW
                   </v-btn>
                 </v-col>
@@ -149,7 +149,7 @@
           </v-col>
           <v-col>
             <v-radio-group
-              v-model="radioSelection"
+              v-model="filter.selection"
               row
               dense
               hide-details="auto"
@@ -191,9 +191,14 @@ import _ from "lodash";
 
 export default {
   data: () => ({
-    filterName: "",
-    radioSelection: "1",
+    // add filter data object
+    filter: {
+      name: "",
+      criteria: [],
+      selection: "1",
+    },
 
+    // data and default values for criteria boxes
     criteriaTypes: ["Amount", "Title", "Date"],
     criteriaOperators: {
       Amount: ["greater than", "equals", "less than"],
@@ -203,10 +208,8 @@ export default {
     criteriaDefaultValues: {
       Amount: 0,
       Title: "",
-      Date: new Date().toJSON().substr(0, 10), // set the date picker to today as default
+      Date: new Date().toISOString().substr(0, 10), // set the date picker to today as default
     },
-
-    criteriaRows: [],
   }),
 
   methods: {
@@ -223,41 +226,39 @@ export default {
      * user by clicking the "add row" button or by the system when the dialog
      * is first created (to create the initial criteria).
      */
-    addCriteriaRow() {
-      this.criteriaRows.push({
-        id: _.uniqueId(), // give this row an unique id for Vue v-for loop
-        criteriaType: "Amount",
+    addCriteria() {
+      this.filter.criteria.push({
+        id: _.uniqueId(), // give this criteria an unique id for Vue v-for loop
+        type: "Amount",
       });
 
       // set initial criteria operator and value depending on the type
       this.criteriaTypeChanged(
-        this.criteriaRows[this.criteriaRows.length - 1].id
+        this.filter.criteria[this.filter.criteria.length - 1].id
       );
     },
 
     /**
-     * The criteria type of a row has been changed. Update available criteria
+     * A criteria type has been changed. Update available criteria
      * operators and values.
      */
-    criteriaTypeChanged(rowId) {
-      var rowIndex = this.criteriaRows.findIndex(
-        (criteriaRow) => criteriaRow.id == rowId
+    criteriaTypeChanged(criteriaId) {
+      var index = this.filter.criteria.findIndex(
+        (criteria) => criteria.id == criteriaId
       );
-      var newType = this.criteriaRows[rowIndex].criteriaType;
+      var newType = this.filter.criteria[index].type;
 
       // reset new criteria operator and default value based on the new type
-      this.criteriaRows[rowIndex].criteriaOperator =
-        this.criteriaOperators[newType][0];
-      this.criteriaRows[rowIndex].criteriaValue =
-        this.criteriaDefaultValues[newType];
+      this.filter.criteria[index].operator = this.criteriaOperators[newType][0];
+      this.filter.criteria[index].value = this.criteriaDefaultValues[newType];
     },
 
     /**
-     * Delete an element from the criteria array.
+     * Delete an element from the filter criteria array.
      */
-    deleteCriteriaRow(rowId) {
-      this.criteriaRows = this.criteriaRows.filter(
-        (criteriaRow) => criteriaRow.id != rowId
+    deleteCriteria(rowId) {
+      this.filter.criteria = this.filter.criteria.filter(
+        (criteria) => criteria.id != rowId
       );
     },
 
@@ -265,13 +266,14 @@ export default {
      * Save the new filter and its data to the back end and notify the parent component.
      */
     saveNewFilter() {
-      console.log(JSON.stringify(this.criteriaRows));
+      console.log(JSON.stringify(this.filter));
       this.$emit("save");
     },
   },
 
   mounted() {
-    this.addCriteriaRow(); // there must be at least 1 criteria so add it when the component is initialized
+    // there must be at least 1 criteria so add it when the dialog is initialized
+    this.addCriteria();
   },
 };
 </script>

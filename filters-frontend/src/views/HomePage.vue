@@ -32,9 +32,9 @@
                 <!-- List all criteria as bullet points here -->
                 <ul class="pl-4 pt-2 pb-2">
                   <li v-for="criteria in filter.criteria" :key="criteria.id">
-                    {{ criteria.criteriaType }}
-                    {{ criteria.criteriaOperator }}
-                    {{ criteria.criteriaValue }}
+                    {{ criteria.type }}
+                    {{ criteria.operator }}
+                    {{ criteria.value }}
                   </li>
                 </ul>
               </td>
@@ -67,21 +67,21 @@ export default {
         criteria: [
           {
             id: 0,
-            criteriaType: "Amount",
-            criteriaOperator: ">=",
-            criteriaValue: "5",
+            type: "Amount",
+            operator: "greater than",
+            value: "5",
           },
           {
             id: 1,
-            criteriaType: "Title",
-            criteriaOperator: "starts with",
-            criteriaValue: "asbf",
+            type: "Title",
+            operator: "starts with",
+            value: "asbf",
           },
           {
             id: 2,
-            criteriaType: "Title",
-            criteriaOperator: "ends with",
-            criteriaValue: "kdege",
+            type: "Title",
+            operator: "ends with",
+            value: "kdege",
           },
         ],
         selection: "Selection 1",
@@ -91,21 +91,21 @@ export default {
         criteria: [
           {
             id: 0,
-            criteriaType: "Amount",
-            criteriaOperator: "==",
-            criteriaValue: "1",
+            type: "Amount",
+            operator: "less than",
+            value: "1",
           },
           {
             id: 1,
-            criteriaType: "Title",
-            criteriaOperator: "starts with",
-            criteriaValue: "jkvev",
+            type: "Title",
+            operator: "starts with",
+            value: "jkvev",
           },
           {
             id: 2,
-            criteriaType: "Title",
-            criteriaOperator: "ends with",
-            criteriaValue: "821h",
+            type: "Title",
+            operator: "ends with",
+            value: "821h",
           },
         ],
         selection: "Selection 2",
