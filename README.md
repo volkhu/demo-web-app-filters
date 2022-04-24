@@ -11,13 +11,13 @@ Demo web application displaying a list of user defined filters saved in an SQL d
 * Filter dialog operates in non-modal mode
 * Database tables are created and test data inserted on startup
 * Test data contains 2 filters
+* Communication via REST API and JSON
 
 # Possible improvements
 * Verify data on the back end
 * Add unit and integration tests
 * Support modal dialog mode
 * Fix dialog width, allow user to resize height and add a scrollbar
-* 
 
 # Technologies / tools used
 Front-end: Visual Studio Code, Vue.js v2, Vuetify, axios
