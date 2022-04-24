@@ -1,6 +1,12 @@
 # demo-web-app-filters
 Demo web application displaying a list of user defined filters saved in an SQL database.
 
+# Filter table
+![Filter table](/images/filter_table.png "Filter table")
+
+# Add filter dialog
+![Add filter dialog](/images/add_filter_dialog.png "Add filter dialog")
+
 # Features
 * View a list of filters with their criteria
 * Add and delete criteria for each filter
@@ -21,4 +27,5 @@ Demo web application displaying a list of user defined filters saved in an SQL d
 
 # Technologies / tools used
 Front-end: Visual Studio Code, Vue.js v2, Vuetify, axios
+
 Back-end: IntelliJ Idea, Spring Boot, PostgreSQL
