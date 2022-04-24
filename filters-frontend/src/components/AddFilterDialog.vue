@@ -4,7 +4,7 @@
       <v-row>
         <v-col>Add Filter</v-col>
         <v-col class="text-right">
-          <v-btn icon @click="closeAddFilterDialog"
+          <v-btn icon @click="closeAddFilterDialog" :disabled="savingNewFilter"
             ><v-icon>mdi-close</v-icon></v-btn
           >
         </v-col>
@@ -29,6 +29,7 @@
                     maxlength="64"
                     class="pt-1"
                     v-model="filter.name"
+                    :disabled="savingNewFilter"
                   ></v-text-field>
                 </v-col>
                 <!-- Some empty cols to align this row's name input box with next row's criteria input boxes -->
@@ -62,6 +63,7 @@
                     hide-details="auto"
                     class="pt-1"
                     @change="criteriaTypeChanged(criteria.id)"
+                    :disabled="savingNewFilter"
                   ></v-select>
                 </v-col>
 
@@ -74,6 +76,7 @@
                     dense
                     hide-details="auto"
                     class="pt-1"
+                    :disabled="savingNewFilter"
                   ></v-select>
                 </v-col>
 
@@ -90,6 +93,7 @@
                     required
                     maxlength="64"
                     class="pt-1"
+                    :disabled="savingNewFilter"
                   ></v-text-field>
 
                   <!-- Text input for "Title" criteria type -->
@@ -102,6 +106,7 @@
                     required
                     maxlength="64"
                     class="pt-1"
+                    :disabled="savingNewFilter"
                   ></v-text-field>
 
                   <!-- Date picker input for "Date" criteria type (also update datepicker
@@ -114,6 +119,7 @@
                     show-current="true"
                     first-day-of-week="1"
                     @change="$forceUpdate()"
+                    :disabled="savingNewFilter"
                   ></v-date-picker>
                 </v-col>
 
@@ -122,7 +128,7 @@
                   <v-btn
                     icon
                     class="mt-1"
-                    :disabled="filter.criteria.length == 1"
+                    :disabled="filter.criteria.length == 1 || savingNewFilter"
                     @click="deleteCriteria(criteria.id)"
                     ><v-icon>mdi-delete</v-icon></v-btn
                   >
@@ -132,7 +138,11 @@
               <!-- Add criteria button inner row -->
               <v-row>
                 <v-col class="text-center">
-                  <v-btn color="secondary" @click="addCriteria">
+                  <v-btn
+                    color="secondary"
+                    @click="addCriteria"
+                    :disabled="savingNewFilter"
+                  >
                     <v-icon class="mr-2">mdi-plus</v-icon>ADD ROW
                   </v-btn>
                 </v-col>
@@ -154,6 +164,7 @@
               dense
               hide-details="auto"
               class="mt-2"
+              :disabled="savingNewFilter"
             >
               <v-radio label="Select 1" value="1"></v-radio>
               <v-radio label="Select 2" value="2"></v-radio>
@@ -169,6 +180,7 @@
               color="secondary"
               style="width: 120px"
               @click="closeAddFilterDialog"
+              :disabled="savingNewFilter"
             >
               CLOSE
             </v-btn>
@@ -177,17 +189,23 @@
               style="width: 120px"
               class="ml-5"
               type="submit"
+              :disabled="savingNewFilter"
               >SAVE
             </v-btn>
           </v-col>
         </v-row>
       </v-container>
     </form>
+    <v-progress-linear
+      indeterminate
+      v-show="savingNewFilter"
+    ></v-progress-linear>
   </v-card>
 </template>
 
 <script>
 import _ from "lodash";
+import axios from "axios";
 
 export default {
   data: () => ({
@@ -210,6 +228,8 @@ export default {
       Title: "",
       Date: new Date().toISOString().substr(0, 10), // set the date picker to today as default
     },
+
+    savingNewFilter: false,
   }),
 
   methods: {
@@ -265,9 +285,17 @@ export default {
     /**
      * Save the new filter and its data to the back end and notify the parent component.
      */
-    saveNewFilter() {
-      console.log(JSON.stringify(this.filter));
-      this.$emit("save");
+    async saveNewFilter() {
+      this.savingNewFilter = true;
+
+      try {
+        await axios.post("/addFilter", this.filter);
+        this.$emit("save");
+      } catch (error) {
+        alert(`Cannot save project. ${error}`);
+      }
+
+      this.savingNewFilter = false;
     },
   },
 
