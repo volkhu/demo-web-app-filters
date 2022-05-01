@@ -17,139 +17,125 @@
           <v-col cols="2" class="pl-0">
             <v-subheader>Filter name</v-subheader>
           </v-col>
-          <v-col class="ma-0 pa-0">
-            <v-container>
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    outlined
-                    dense
-                    hide-details="auto"
-                    required
-                    maxlength="64"
-                    class="pt-1"
-                    v-model="filter.name"
-                    :disabled="savingNewFilter"
-                  ></v-text-field>
-                </v-col>
-                <!-- Some empty cols to align this row's name input box with next row's criteria input boxes -->
-                <v-col></v-col>
-                <v-col></v-col>
-                <v-col cols="1"></v-col>
-              </v-row>
-            </v-container>
+          <v-col cols="3">
+            <v-text-field
+              outlined
+              dense
+              hide-details="auto"
+              required
+              maxlength="64"
+              class="pt-1"
+              v-model="filter.name"
+              :disabled="savingNewFilter"
+            ></v-text-field>
           </v-col>
         </v-row>
 
-        <!-- Criteria list row -->
-        <v-row>
+        <!-- Criteria list rows -->
+        <v-row
+          v-for="(criteria, index) in filter.criteria"
+          v-bind:key="criteria.vueId"
+        >
+          <!-- First column to indicate that this is a criteria row
+          (show only for the first criteria row) -->
           <v-col cols="2" class="pl-0">
-            <v-subheader>Criteria</v-subheader>
+            <v-subheader v-if="index == 0">Criteria</v-subheader>
           </v-col>
-          <v-col class="ma-0 pa-0">
-            <v-container>
-              <!-- Inner criteria rows -->
-              <v-row
-                v-for="criteria in filter.criteria"
-                v-bind:key="criteria.vueId"
-              >
-                <!-- Criteria type -->
-                <v-col>
-                  <v-select
-                    :items="criteriaTypes"
-                    v-model="criteria.type"
-                    outlined
-                    dense
-                    hide-details="auto"
-                    class="pt-1"
-                    @change="criteriaTypeChanged(criteria.vueId)"
-                    :disabled="savingNewFilter"
-                  ></v-select>
-                </v-col>
+          <!-- Criteria type -->
+          <v-col cols="3">
+            <v-select
+              :items="criteriaTypes"
+              v-model="criteria.type"
+              outlined
+              dense
+              hide-details="auto"
+              class="pt-1"
+              @change="criteriaTypeChanged(criteria.vueId)"
+              :disabled="savingNewFilter"
+            ></v-select>
+          </v-col>
 
-                <!-- Criteria operator -->
-                <v-col>
-                  <v-select
-                    :items="criteriaOperators[criteria.type]"
-                    v-model="criteria.operator"
-                    outlined
-                    dense
-                    hide-details="auto"
-                    class="pt-1"
-                    :disabled="savingNewFilter"
-                  ></v-select>
-                </v-col>
+          <!-- Criteria operator -->
+          <v-col cols="3">
+            <v-select
+              :items="criteriaOperators[criteria.type]"
+              v-model="criteria.operator"
+              outlined
+              dense
+              hide-details="auto"
+              class="pt-1"
+              :disabled="savingNewFilter"
+            ></v-select>
+          </v-col>
 
-                <!-- Criteria value (different input type depending on selected criteria type) -->
-                <v-col>
-                  <!-- Number input for "Amount" criteria type -->
-                  <v-text-field
-                    v-if="criteria.type == 'Amount'"
-                    v-model="criteria.value"
-                    type="number"
-                    outlined
-                    dense
-                    hide-details="auto"
-                    required
-                    maxlength="64"
-                    class="pt-1"
-                    :disabled="savingNewFilter"
-                  ></v-text-field>
+          <!-- Criteria value (different input type depending on selected criteria type) -->
+          <v-col cols="3">
+            <!-- Number input for "Amount" criteria type -->
+            <v-text-field
+              v-if="criteria.type == 'Amount'"
+              v-model="criteria.value"
+              type="number"
+              outlined
+              dense
+              hide-details="auto"
+              required
+              maxlength="64"
+              class="pt-1"
+              :disabled="savingNewFilter"
+            ></v-text-field>
 
-                  <!-- Text input for "Title" criteria type -->
-                  <v-text-field
-                    v-if="criteria.type == 'Title'"
-                    v-model="criteria.value"
-                    outlined
-                    dense
-                    hide-details="auto"
-                    required
-                    maxlength="64"
-                    class="pt-1"
-                    :disabled="savingNewFilter"
-                  ></v-text-field>
+            <!-- Text input for "Title" criteria type -->
+            <v-text-field
+              v-if="criteria.type == 'Title'"
+              v-model="criteria.value"
+              outlined
+              dense
+              hide-details="auto"
+              required
+              maxlength="64"
+              class="pt-1"
+              :disabled="savingNewFilter"
+            ></v-text-field>
 
-                  <!-- Date picker input for "Date" criteria type (also update datepicker
+            <!-- Date picker input for "Date" criteria type (also update datepicker
                   instantly on selection with @change event since we are using it on its
                   own without an accompanying text field -->
-                  <v-date-picker
-                    v-if="criteria.type == 'Date'"
-                    v-model="criteria.value"
-                    class="pt-1"
-                    show-current="true"
-                    first-day-of-week="1"
-                    @change="$forceUpdate()"
-                    :disabled="savingNewFilter"
-                  ></v-date-picker>
-                </v-col>
-
-                <!-- Delete criteria button (disable if there is only one last criteria left) -->
-                <v-col cols="1">
-                  <v-btn
-                    icon
-                    class="mt-1"
-                    :disabled="filter.criteria.length == 1 || savingNewFilter"
-                    @click="deleteCriteria(criteria.vueId)"
-                    ><v-icon>mdi-delete</v-icon></v-btn
-                  >
-                </v-col>
-              </v-row>
-
-              <!-- Add criteria button inner row -->
-              <v-row>
-                <v-col class="text-center">
-                  <v-btn
-                    color="secondary"
-                    @click="addCriteria"
-                    :disabled="savingNewFilter"
-                  >
-                    <v-icon class="mr-2">mdi-plus</v-icon>ADD ROW
-                  </v-btn>
-                </v-col>
-                <v-col cols="1"></v-col>
-              </v-row>
-            </v-container>
+            <v-date-picker
+              v-if="criteria.type == 'Date'"
+              v-model="criteria.value"
+              class="pt-1"
+              show-current="true"
+              first-day-of-week="1"
+              @change="$forceUpdate()"
+              :disabled="savingNewFilter"
+            ></v-date-picker>
           </v-col>
+
+          <!-- Delete criteria button (disable if there is only one last criteria left) -->
+          <v-col cols="1">
+            <v-btn
+              icon
+              class="mt-1"
+              :disabled="filter.criteria.length == 1 || savingNewFilter"
+              @click="deleteCriteria(criteria.vueId)"
+              ><v-icon>mdi-delete</v-icon></v-btn
+            >
+          </v-col>
+        </v-row>
+
+        <!-- Add criteria button row -->
+        <v-row>
+          <v-col cols="2"> </v-col>
+          <v-col class="text-center">
+            <v-btn
+              color="secondary"
+              @click="addCriteria"
+              :disabled="savingNewFilter"
+            >
+              <v-icon class="mr-2">mdi-plus</v-icon>ADD ROW
+            </v-btn>
+          </v-col>
+          <v-col cols="1"></v-col>
         </v-row>
 
         <!-- Selection row -->
