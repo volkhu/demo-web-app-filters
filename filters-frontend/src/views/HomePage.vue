@@ -48,8 +48,25 @@
         v-show="areFiltersLoading"
       ></v-progress-linear>
     </v-card>
+
+    <!-- Wrap the add filter dialog in Vuetify dialog box if modal mode is configured -->
+    <v-dialog
+      v-if="FILTERS_RUNTIME_CONFIG.ADD_FILTER_DIALOG_MODAL"
+      v-model="isAddFilterDialogShown"
+      max-width="1200"
+      persistent
+    >
+      <add-filter-dialog
+        v-if="isAddFilterDialogShown"
+        class="mt-3"
+        @close="onAddFilterDialogClosed"
+        @save="onAddFilterDialogSaved"
+      />
+    </v-dialog>
+
+    <!-- Otherwise display just the dialog embedded in this page -->
     <add-filter-dialog
-      v-if="isAddFilterDialogShown"
+      v-else-if="isAddFilterDialogShown"
       class="mt-3"
       @close="onAddFilterDialogClosed"
       @save="onAddFilterDialogSaved"
