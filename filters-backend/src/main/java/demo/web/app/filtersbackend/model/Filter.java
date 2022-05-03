@@ -1,5 +1,7 @@
 package demo.web.app.filtersbackend.model;
 
+import demo.web.app.filtersbackend.model.types.Selection;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class Filter {
     private String name;
     @OneToMany(mappedBy = "filter")
     private List<Criterion> criteria;
-    private String selection;
+    @Enumerated(EnumType.STRING)
+    private Selection selection;
 
     public Long getId() {
         return id;
@@ -29,11 +32,11 @@ public class Filter {
         this.name = name;
     }
 
-    public String getSelection() {
+    public Selection getSelection() {
         return selection;
     }
 
-    public void setSelection(String selection) {
+    public void setSelection(Selection selection) {
         this.selection = selection;
     }
 

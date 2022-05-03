@@ -152,9 +152,12 @@
               class="mt-2"
               :disabled="savingNewFilter"
             >
-              <v-radio label="Select 1" value="1"></v-radio>
-              <v-radio label="Select 2" value="2"></v-radio>
-              <v-radio label="Select 3" value="3"></v-radio>
+              <v-radio
+                v-for="(value, key) in FILTERS_RUNTIME_CONFIG.FILTER_SELECTIONS"
+                :key="key"
+                :label="value"
+                :value="key"
+              ></v-radio>
             </v-radio-group>
           </v-col>
         </v-row>
@@ -199,7 +202,7 @@ export default {
     filter: {
       name: "",
       criteria: [],
-      selection: "1",
+      selection: "SELECT_1",
     },
 
     // data and default values for criteria boxes

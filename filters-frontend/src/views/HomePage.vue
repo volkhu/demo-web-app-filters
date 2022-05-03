@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="filter in filters" :key="filter.name">
+            <tr v-for="filter in filters" :key="filter.id">
               <td>{{ filter.name }}</td>
               <td>
                 <!-- List all criteria as bullet points here -->
@@ -38,7 +38,9 @@
                   </li>
                 </ul>
               </td>
-              <td>{{ filter.selection }}</td>
+              <td>
+                {{ FILTERS_RUNTIME_CONFIG.FILTER_SELECTIONS[filter.selection] }}
+              </td>
             </tr>
           </tbody>
         </template>
