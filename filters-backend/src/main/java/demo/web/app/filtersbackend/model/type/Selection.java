@@ -1,4 +1,4 @@
-package demo.web.app.filtersbackend.model.types;
+package demo.web.app.filtersbackend.model.type;
 
 public enum Selection {
     SELECT_1,

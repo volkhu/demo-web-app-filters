@@ -1,17 +1,7 @@
-package demo.web.app.filtersbackend.model;
+package demo.web.app.filtersbackend.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
-
-@Entity
-public class Criterion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CriterionDto {
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "filter_id", nullable = false)
-    private Filter filter;
     private String type;
     private String operator;
     private String value;
@@ -46,13 +36,5 @@ public class Criterion {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public Filter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(Filter filter) {
-        this.filter = filter;
     }
 }

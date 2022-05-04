@@ -1,20 +1,14 @@
-package demo.web.app.filtersbackend.model;
+package demo.web.app.filtersbackend.dto;
 
 import demo.web.app.filtersbackend.model.type.Selection;
 
-import javax.persistence.*;
 import java.util.List;
 
-@Entity
-public class Filter {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FilterDto {
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "filter")
-    private List<Criterion> criteria;
-    @Enumerated(EnumType.STRING)
     private Selection selection;
+    private List<CriterionDto> criteria;
 
     public Long getId() {
         return id;
@@ -40,11 +34,11 @@ public class Filter {
         this.selection = selection;
     }
 
-    public List<Criterion> getCriteria() {
+    public List<CriterionDto> getCriteria() {
         return criteria;
     }
 
-    public void setCriteria(List<Criterion> criteria) {
+    public void setCriteria(List<CriterionDto> criteria) {
         this.criteria = criteria;
     }
 }
