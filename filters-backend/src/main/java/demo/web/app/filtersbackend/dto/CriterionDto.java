@@ -1,9 +1,14 @@
 package demo.web.app.filtersbackend.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class CriterionDto {
     private Long id;
+    @NotEmpty
     private String type;
+    @NotEmpty
     private String operator;
+    @NotEmpty
     private String value;
 
     public Long getId() {

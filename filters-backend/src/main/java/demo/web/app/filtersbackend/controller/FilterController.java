@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class FilterController {
     }
 
     @RequestMapping(value="/filters", method=RequestMethod.POST)
-    public FilterDto createFilter(@RequestBody FilterDto filterDto) {
+    public FilterDto createFilter(@Valid @RequestBody FilterDto filterDto) {
         Filter filterRequest = modelMapper.map(filterDto, Filter.class);
         Filter filter = filterService.createFilter(filterRequest);
 

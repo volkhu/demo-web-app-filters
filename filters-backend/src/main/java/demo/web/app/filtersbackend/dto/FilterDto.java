@@ -2,13 +2,19 @@ package demo.web.app.filtersbackend.dto;
 
 import demo.web.app.filtersbackend.model.type.Selection;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class FilterDto {
     private Long id;
+    @NotEmpty
     private String name;
+    @NotNull
     private Selection selection;
-    private List<CriterionDto> criteria;
+    @NotEmpty
+    private List<@Valid CriterionDto> criteria;
 
     public Long getId() {
         return id;
