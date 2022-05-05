@@ -97,18 +97,40 @@
               :disabled="savingNewFilter"
             ></v-text-field>
 
-            <!-- Date picker input for "Date" criteria type (also update datepicker
-                  instantly on selection with @change event since we are using it on its
-                  own without an accompanying text field -->
-            <v-date-picker
+            <!-- Date picker input for "Date" criteria type -->
+            <v-menu
+              v-model="criteria.datePickerOpen"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-overflow
+              min-width="auto"
+              offset-y
               v-if="criteria.type == 'Date'"
-              v-model="criteria.value"
-              class="pt-1"
-              show-current="true"
-              first-day-of-week="1"
-              @change="$forceUpdate()"
               :disabled="savingNewFilter"
-            ></v-date-picker>
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="criteria.value"
+                  v-bind="attrs"
+                  v-on="on"
+                  outlined
+                  dense
+                  hide-details="auto"
+                  required
+                  readonly
+                  maxlength="64"
+                  class="pt-1"
+                  :disabled="savingNewFilter"
+                ></v-text-field>
+              </template>
+
+              <v-date-picker
+                v-model="criteria.value"
+                @input="criteria.datePickerOpen = false"
+                class="pt-1"
+                first-day-of-week="1"
+              ></v-date-picker>
+            </v-menu>
           </v-col>
 
           <!-- Delete criteria button (disable if there is only one last criteria left) -->
