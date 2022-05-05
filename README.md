@@ -1,11 +1,8 @@
 # demo-web-app-filters
 Demo web application displaying a list of user defined filters saved in an SQL database.
 
-# Filter table
-![Filter table](/images/filter_table.png "Filter table")
-
-# Add filter dialog
-![Add filter dialog](/images/add_filter_dialog.png "Add filter dialog")
+# Screenshot of the front-end
+![Filters page](/images/filters_page.png "Filters page")
 
 # Features
 * View a list of filters with their criteria
