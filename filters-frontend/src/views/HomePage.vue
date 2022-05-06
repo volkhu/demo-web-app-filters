@@ -7,8 +7,8 @@
           <v-col class="text-right">
             <v-btn
               color="primary"
-              @click="openAddFilterDialog"
               :disabled="isAddFilterDialogShown"
+              @click="openAddFilterDialog"
             >
               ADD FILTER
             </v-btn>
@@ -29,31 +29,36 @@
             <tr v-for="filter in filters" :key="filter.id">
               <td>{{ filter.name }}</td>
               <td>
-                <!-- List all criteria as bullet points here -->
+                <!-- List every criterion of this filter as a bullet point -->
                 <ul class="pl-4 pt-2 pb-2">
-                  <li v-for="criteria in filter.criteria" :key="criteria.id">
-                    {{ criteria.type }}
-                    {{ criteria.operator }}
-                    {{ criteria.value }}
+                  <li v-for="criterion in filter.criteria" :key="criterion.id">
+                    {{ RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].NAME }}
+                    {{
+                      RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].OPERATORS[
+                        criterion.operator
+                      ]
+                    }}
+                    {{ criterion.value }}
                   </li>
                 </ul>
               </td>
               <td>
-                {{ FILTERS_RUNTIME_CONFIG.FILTER_SELECTIONS[filter.selection] }}
+                <!-- Map the filter's selection value enum to text -->
+                {{ RUNTIME_CONFIG.SELECTION_VALUES[filter.selection] }}
               </td>
             </tr>
           </tbody>
         </template>
       </v-simple-table>
       <v-progress-linear
-        indeterminate
         v-show="areFiltersLoading"
+        indeterminate
       ></v-progress-linear>
     </v-card>
 
     <!-- Wrap the add filter dialog in Vuetify dialog box if modal mode is configured -->
     <v-dialog
-      v-if="FILTERS_RUNTIME_CONFIG.ADD_FILTER_DIALOG_MODAL"
+      v-if="RUNTIME_CONFIG.MODAL_DIALOG"
       v-model="isAddFilterDialogShown"
       max-width="1200"
       persistent
@@ -61,8 +66,8 @@
       <add-filter-dialog
         v-if="isAddFilterDialogShown"
         class="mt-3"
-        @close="onAddFilterDialogClosed"
-        @save="onAddFilterDialogSaved"
+        @close-dialog="closeAddFilterDialog"
+        @filter-saved="onAddFilterDialogSaved"
       />
     </v-dialog>
 
@@ -70,18 +75,19 @@
     <add-filter-dialog
       v-else-if="isAddFilterDialogShown"
       class="mt-3"
-      @close="onAddFilterDialogClosed"
-      @save="onAddFilterDialogSaved"
+      @close-dialog="closeAddFilterDialog"
+      @filter-saved="onAddFilterDialogSaved"
     />
   </v-container>
 </template>
 
 <script>
-import AddFilterDialog from "@/components/AddFilterDialog.vue";
 import axios from "axios";
+import AddFilterDialog from "@/components/AddFilterDialog.vue";
 
 export default {
   components: { AddFilterDialog },
+
   data: () => ({
     isAddFilterDialogShown: false,
     areFiltersLoading: true,
@@ -91,7 +97,7 @@ export default {
 
   methods: {
     /**
-     * Fetch existing filters from the back end.
+     * Get existing filters from the back end.
      */
     async loadFilters() {
       this.areFiltersLoading = true;
@@ -114,17 +120,18 @@ export default {
     },
 
     /**
-     * Just hide the add filter dialog if user decided to close it.
+     * Close the add filter dialog.
      */
-    onAddFilterDialogClosed() {
+    closeAddFilterDialog() {
       this.isAddFilterDialogShown = false;
     },
 
     /**
-     * Close the add filter dialog and reload the filter list since the user added a new filter.
+     * When the user successfully saved a new filter to the back-end,
+     * close the add filter dialog and reload the filter list.
      */
     onAddFilterDialogSaved() {
-      this.isAddFilterDialogShown = false;
+      this.closeAddFilterDialog();
       this.loadFilters();
     },
   },

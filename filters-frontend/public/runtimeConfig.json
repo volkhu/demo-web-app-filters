@@ -1,10 +1,47 @@
 {
     "API_BASE_URL": "http://localhost:8080/api",
-    "ADD_FILTER_DIALOG_MODAL": true,
     
-    "FILTER_SELECTIONS": {
+    "MODAL_DIALOG": true,
+    "DEFAULT_NAME": "",
+    "DEFAULT_CRITERION_TYPE": "AMOUNT",
+    "DEFAULT_SELECTION": "SELECT_1",
+
+    "SELECTION_VALUES": {
         "SELECT_1": "Select 1",
         "SELECT_2": "Select 2",
         "SELECT_3": "Select 3"
+    },
+    
+    "CRITERION_TYPES": {
+        "AMOUNT": {
+            "NAME": "Amount",
+            "OPERATORS": {
+                "GREATER_THAN": "greater than",
+                "EQUALS": "equals",
+                "LESS_THAN": "less than"
+            },
+            "FORMAT": "NUMBER",
+            "DEFAULT_VALUE": 0
+        },
+        "TITLE": {
+            "NAME": "Title",
+            "OPERATORS": {
+                "STARTS_WITH": "starts with",
+                "EQUALS": "equals",
+                "CONTAINS": "contains",
+                "ENDS_WITH": "ends with"
+            },
+            "FORMAT": "TEXT",
+            "DEFAULT_VALUE": ""
+        },
+        "DATE": {
+            "NAME": "Date",
+            "OPERATORS": {
+                "FROM": "from",
+                "UNTIL": "until"
+            },
+            "FORMAT": "DATE",
+            "DEFAULT_VALUE": null
+        }
     }
 }

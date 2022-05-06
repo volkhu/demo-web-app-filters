@@ -4,13 +4,13 @@
       <v-row>
         <v-col>Add Filter</v-col>
         <v-col class="text-right">
-          <v-btn icon @click="closeAddFilterDialog" :disabled="savingNewFilter"
+          <v-btn icon :disabled="savingFilter" @click="$emit('close-dialog')"
             ><v-icon>mdi-close</v-icon></v-btn
           >
         </v-col>
       </v-row>
     </v-card-title>
-    <form @submit.prevent="saveNewFilter">
+    <form @submit.prevent="saveFilter">
       <v-container>
         <!-- Filter name row -->
         <v-row>
@@ -19,140 +19,41 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
+              class="pt-1"
               outlined
               dense
               hide-details="auto"
               required
               maxlength="64"
-              class="pt-1"
               v-model="filter.name"
-              :disabled="savingNewFilter"
+              :disabled="savingFilter"
             ></v-text-field>
           </v-col>
         </v-row>
 
         <!-- Criteria list rows -->
-        <v-row
-          v-for="(criteria, index) in filter.criteria"
-          v-bind:key="criteria.vueId"
-        >
-          <!-- First column to indicate that this is a criteria row
-          (show only for the first criteria row) -->
-          <v-col cols="2" class="pl-0">
-            <v-subheader v-if="index == 0">Criteria</v-subheader>
-          </v-col>
-          <!-- Criteria type -->
-          <v-col cols="3">
-            <v-select
-              :items="criteriaTypes"
-              v-model="criteria.type"
-              outlined
-              dense
-              hide-details="auto"
-              class="pt-1"
-              @change="criteriaTypeChanged(criteria.vueId)"
-              :disabled="savingNewFilter"
-            ></v-select>
-          </v-col>
+        <criterion-row
+          v-for="(criterion, index) in filter.criteria"
+          :key="criterion.vueId"
+          :index="index"
+          :criterion="criterion"
+          :showRowPrefix="index == 0"
+          :allowDeletion="filter.criteria.length > 1"
+          :disabled="savingFilter"
+          @change-type="changeCriterionType"
+          @change-operator="changeCriterionOperator"
+          @change-value="changeCriterionValue"
+          @delete-criterion="deleteCriterion"
+        />
 
-          <!-- Criteria operator -->
-          <v-col cols="3">
-            <v-select
-              :items="criteriaOperators[criteria.type]"
-              v-model="criteria.operator"
-              outlined
-              dense
-              hide-details="auto"
-              class="pt-1"
-              :disabled="savingNewFilter"
-            ></v-select>
-          </v-col>
-
-          <!-- Criteria value (different input type depending on selected criteria type) -->
-          <v-col cols="3">
-            <!-- Number input for "Amount" criteria type -->
-            <v-text-field
-              v-if="criteria.type == 'Amount'"
-              v-model="criteria.value"
-              type="number"
-              outlined
-              dense
-              hide-details="auto"
-              required
-              maxlength="64"
-              class="pt-1"
-              :disabled="savingNewFilter"
-            ></v-text-field>
-
-            <!-- Text input for "Title" criteria type -->
-            <v-text-field
-              v-if="criteria.type == 'Title'"
-              v-model="criteria.value"
-              outlined
-              dense
-              hide-details="auto"
-              required
-              maxlength="64"
-              class="pt-1"
-              :disabled="savingNewFilter"
-            ></v-text-field>
-
-            <!-- Date picker input for "Date" criteria type -->
-            <v-menu
-              v-model="criteria.datePickerOpen"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-overflow
-              min-width="auto"
-              offset-y
-              v-if="criteria.type == 'Date'"
-              :disabled="savingNewFilter"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="criteria.value"
-                  v-bind="attrs"
-                  v-on="on"
-                  outlined
-                  dense
-                  hide-details="auto"
-                  required
-                  readonly
-                  maxlength="64"
-                  class="pt-1"
-                  :disabled="savingNewFilter"
-                ></v-text-field>
-              </template>
-
-              <v-date-picker
-                v-model="criteria.value"
-                @input="criteria.datePickerOpen = false"
-                class="pt-1"
-                first-day-of-week="1"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-
-          <!-- Delete criteria button (disable if there is only one last criteria left) -->
-          <v-col cols="1">
-            <v-btn
-              icon
-              class="mt-1"
-              :disabled="filter.criteria.length == 1 || savingNewFilter"
-              @click="deleteCriteria(criteria.vueId)"
-              ><v-icon>mdi-delete</v-icon></v-btn
-            >
-          </v-col>
-        </v-row>
-
-        <!-- Add criteria button row -->
+        <!-- Add criterion button row -->
         <v-row>
           <v-col cols="2"> </v-col>
           <v-col class="text-center">
             <v-btn
               color="secondary"
-              @click="addCriteria"
-              :disabled="savingNewFilter"
+              @click="addCriterion"
+              :disabled="savingFilter"
             >
               <v-icon class="mr-2">mdi-plus</v-icon>ADD ROW
             </v-btn>
@@ -167,15 +68,15 @@
           </v-col>
           <v-col>
             <v-radio-group
+              class="mt-2"
               v-model="filter.selection"
               row
               dense
               hide-details="auto"
-              class="mt-2"
-              :disabled="savingNewFilter"
+              :disabled="savingFilter"
             >
               <v-radio
-                v-for="(value, key) in FILTERS_RUNTIME_CONFIG.FILTER_SELECTIONS"
+                v-for="(value, key) in RUNTIME_CONFIG.SELECTION_VALUES"
                 :key="key"
                 :label="value"
                 :value="key"
@@ -190,129 +91,147 @@
             <v-btn
               color="secondary"
               style="width: 120px"
-              @click="closeAddFilterDialog"
-              :disabled="savingNewFilter"
+              @click="$emit('close-dialog')"
+              :disabled="savingFilter"
             >
               CLOSE
             </v-btn>
             <v-btn
+              class="ml-5"
               color="primary"
               style="width: 120px"
-              class="ml-5"
               type="submit"
-              :disabled="savingNewFilter"
+              :disabled="savingFilter"
               >SAVE
             </v-btn>
           </v-col>
         </v-row>
       </v-container>
     </form>
-    <v-progress-linear
-      indeterminate
-      v-show="savingNewFilter"
-    ></v-progress-linear>
+    <v-progress-linear indeterminate v-show="savingFilter"></v-progress-linear>
   </v-card>
 </template>
 
 <script>
 import _ from "lodash";
 import axios from "axios";
+import CriterionRow from "./CriterionRow.vue";
 
 export default {
+  components: { CriterionRow },
+
   data: () => ({
-    // add filter data object
     filter: {
-      name: "",
+      name: null,
       criteria: [],
-      selection: "SELECT_1",
+      selection: null,
     },
 
-    // data and default values for criteria boxes
-    criteriaTypes: ["Amount", "Title", "Date"],
-    criteriaOperators: {
-      Amount: ["greater than", "equals", "less than"],
-      Title: ["starts with", "equals", "contains", "ends with"],
-      Date: ["from", "until"],
-    },
-    criteriaDefaultValues: {
-      Amount: 0,
-      Title: "",
-      Date: new Date().toISOString().substr(0, 10), // set the date picker to today as default
-    },
-
-    savingNewFilter: false,
+    savingFilter: false,
   }),
 
   methods: {
     /**
-     * Close this dialog by notifying the parent component as such.
-     * Called when either the dialog "close" or "X" button has been pressed.
+     * Set add filter dialog's name and selection fields to their
+     * default values from the runtime config after it has been
+     * loaded.
      */
-    closeAddFilterDialog() {
-      this.$emit("close");
+    setFormDefaultValues() {
+      this.filter.name = this.RUNTIME_CONFIG.DEFAULT_NAME;
+      this.filter.selection = this.RUNTIME_CONFIG.DEFAULT_SELECTION;
     },
 
     /**
-     * Add a new criteria to the list with default values. Called either by the
+     * Add a criterion to the list with default values. Called either by the
      * user by clicking the "add row" button or by the system when the dialog
-     * is first created (to create the initial criteria).
+     * is first created (to create the initial criterion).
      */
-    addCriteria() {
+    addCriterion() {
       this.filter.criteria.push({
         vueId: _.uniqueId(), // give this criteria an unique id for Vue v-for loop
-        type: "Amount",
+        type: null,
+        operator: null,
+        value: null,
       });
 
-      // set initial criteria operator and value depending on the type
-      this.criteriaTypeChanged(
-        this.filter.criteria[this.filter.criteria.length - 1].vueId
-      );
+      // initialize this criterion with the default type
+      this.changeCriterionType({
+        index: this.filter.criteria.length - 1,
+        newType: this.RUNTIME_CONFIG.DEFAULT_CRITERION_TYPE,
+      });
     },
 
     /**
-     * A criteria type has been changed. Update available criteria
-     * operators and values.
+     * Change a criterion's type. The index and the new type is specified
+     * inside the event object.
      */
-    criteriaTypeChanged(criteriaId) {
-      var index = this.filter.criteria.findIndex(
-        (criteria) => criteria.vueId == criteriaId
-      );
-      var newType = this.filter.criteria[index].type;
+    changeCriterionType(event) {
+      this.filter.criteria[event.index].type = event.newType;
+      this.filter.criteria[event.index].operator = Object.keys(
+        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].OPERATORS
+      )[0]; // changing the type also requires resetting the operator to something valid
 
-      // reset new criteria operator and default value based on the new type
-      this.filter.criteria[index].operator = this.criteriaOperators[newType][0];
-      this.filter.criteria[index].value = this.criteriaDefaultValues[newType];
+      let defaultValue =
+        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].DEFAULT_VALUE;
+
+      // if the criterion format is date and the default value is null,
+      // use the current date instead
+      if (
+        defaultValue === null &&
+        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].FORMAT == "DATE"
+      ) {
+        defaultValue = new Date().toISOString().substr(0, 10);
+      }
+
+      this.filter.criteria[event.index].value = defaultValue;
     },
 
     /**
-     * Delete an element from the filter criteria array.
+     * Change a criterion's operator. The index and the new operator
+     * is specified inside the event object.
      */
-    deleteCriteria(rowId) {
-      this.filter.criteria = this.filter.criteria.filter(
-        (criteria) => criteria.vueId != rowId
-      );
+    changeCriterionOperator(event) {
+      this.filter.criteria[event.index].operator = event.newOperator;
     },
 
     /**
-     * Save the new filter and its data to the back end and notify the parent component.
+     * Change a criterion's value. The index and the new value
+     * is specified inside the event object.
      */
-    async saveNewFilter() {
-      this.savingNewFilter = true;
+    changeCriterionValue(event) {
+      this.filter.criteria[event.index].value = event.newValue;
+    },
+
+    /**
+     * Delete the criterion with the specified index from the list.
+     */
+    deleteCriterion(index) {
+      this.filter.criteria.splice(index, 1);
+    },
+
+    /**
+     * Save the constructed filter and its data to the back end and notify the parent component.
+     */
+    async saveFilter() {
+      this.savingFilter = true;
 
       try {
+        console.log(JSON.stringify(this.filter));
         await axios.post("/filters", this.filter);
-        this.$emit("save");
+        this.$emit("filter-saved");
       } catch (error) {
         alert(`Cannot save filter. ${error}`);
       }
 
-      this.savingNewFilter = false;
+      this.savingFilter = false;
     },
   },
 
   mounted() {
-    // there must be at least 1 criteria so add it when the dialog is initialized
-    this.addCriteria();
+    this.setFormDefaultValues();
+
+    // there must be at least 1 criterion at all times so add it when the dialog is initialized
+    this.addCriterion();
   },
 };
 </script>

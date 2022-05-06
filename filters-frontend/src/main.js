@@ -16,7 +16,7 @@ axios.get(runtimeConfigURL).then((response) => {
   // create global Vue mixin to access this config from any component
   Vue.mixin({
     data: () => ({
-      FILTERS_RUNTIME_CONFIG: runtimeConfig
+      RUNTIME_CONFIG: runtimeConfig
     }),
   });
 
