@@ -36,7 +36,7 @@
     <v-col cols="3">
       <!-- Value input if the current criterion is of number format -->
       <v-text-field
-        v-if="RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].FORMAT == 'NUMBER'"
+        v-if="criterion.valueFormat === 'NUMBER'"
         class="pt-1"
         outlined
         dense
@@ -50,7 +50,7 @@
 
       <!-- Value input if the current criterion is of text format -->
       <v-text-field
-        v-if="RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].FORMAT == 'TEXT'"
+        v-else-if="criterion.valueFormat === 'TEXT'"
         class="pt-1"
         outlined
         dense
@@ -64,7 +64,7 @@
 
       <!-- Value input if the current criterion is of date format -->
       <v-menu
-        v-if="RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].FORMAT == 'DATE'"
+        v-else-if="criterion.valueFormat === 'DATE'"
         v-model="isDatePickerOpen"
         transition="scale-transition"
         offset-overflow
@@ -125,10 +125,10 @@ export default {
      * Map criterion types from config to a format suitable for Vuetify select box.
      */
     criterionTypes() {
-      const types = this.RUNTIME_CONFIG.CRITERION_TYPES;
+      const typesConfig = this.RUNTIME_CONFIG.CRITERION_TYPES;
 
-      return Object.keys(types).map((key) => ({
-        text: types[key].NAME,
+      return Object.keys(typesConfig).map((key) => ({
+        text: typesConfig[key].NAME,
         value: key,
       }));
     },
@@ -138,11 +138,11 @@ export default {
      * Note that the set of available operators depends on the selected criterion type.
      */
     criterionOperators() {
-      const operators =
+      const operatorsConfig =
         this.RUNTIME_CONFIG.CRITERION_TYPES[this.criterion.type].OPERATORS;
 
-      return Object.keys(operators).map((key) => ({
-        text: operators[key],
+      return Object.keys(operatorsConfig).map((key) => ({
+        text: operatorsConfig[key],
         value: key,
       }));
     },

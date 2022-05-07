@@ -108,7 +108,7 @@
         </v-row>
       </v-container>
     </form>
-    <v-progress-linear indeterminate v-show="savingFilter"></v-progress-linear>
+    <v-progress-linear v-show="savingFilter" indeterminate></v-progress-linear>
   </v-card>
 </template>
 
@@ -152,6 +152,7 @@ export default {
         type: null,
         operator: null,
         value: null,
+        valueFormat: null,
       });
 
       // initialize this criterion with the default type
@@ -166,24 +167,18 @@ export default {
      * inside the event object.
      */
     changeCriterionType(event) {
-      this.filter.criteria[event.index].type = event.newType;
-      this.filter.criteria[event.index].operator = Object.keys(
-        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].OPERATORS
-      )[0]; // changing the type also requires resetting the operator to something valid
+      const newTypeConfig = this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType];
+      let criterion = this.filter.criteria[event.index];
 
-      let defaultValue =
-        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].DEFAULT_VALUE;
+      criterion.type = event.newType;
+      criterion.operator = Object.keys(newTypeConfig.OPERATORS)[0];
+      criterion.valueFormat = newTypeConfig.VALUE_FORMAT;
+      criterion.value = newTypeConfig.DEFAULT_VALUE;
 
-      // if the criterion format is date and the default value is null,
-      // use the current date instead
-      if (
-        defaultValue === null &&
-        this.RUNTIME_CONFIG.CRITERION_TYPES[event.newType].FORMAT == "DATE"
-      ) {
-        defaultValue = new Date().toISOString().substr(0, 10);
+      if (criterion.valueFormat === "DATE" && criterion.value === null) {
+        // use current date instead
+        criterion.value = new Date().toISOString().substr(0, 10);
       }
-
-      this.filter.criteria[event.index].value = defaultValue;
     },
 
     /**
@@ -216,7 +211,6 @@ export default {
       this.savingFilter = true;
 
       try {
-        console.log(JSON.stringify(this.filter));
         await axios.post("/filters", this.filter);
         this.$emit("filter-saved");
       } catch (error) {

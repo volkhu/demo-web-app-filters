@@ -32,19 +32,12 @@
                 <!-- List every criterion of this filter as a bullet point -->
                 <ul class="pl-4 pt-2 pb-2">
                   <li v-for="criterion in filter.criteria" :key="criterion.id">
-                    {{ RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].NAME }}
-                    {{
-                      RUNTIME_CONFIG.CRITERION_TYPES[criterion.type].OPERATORS[
-                        criterion.operator
-                      ]
-                    }}
-                    {{ criterion.value }}
+                    {{ criterionTextRepresentation(criterion) }}
                   </li>
                 </ul>
               </td>
               <td>
-                <!-- Map the filter's selection value enum to text -->
-                {{ RUNTIME_CONFIG.SELECTION_VALUES[filter.selection] }}
+                {{ selectionTextRepresentation(filter.selection) }}
               </td>
             </tr>
           </tbody>
@@ -110,6 +103,31 @@ export default {
       }
 
       this.areFiltersLoading = false;
+    },
+
+    /**
+     * Create a human readable representation of a criterion, suitable
+     * for displaying in a table.
+     */
+    criterionTextRepresentation(criterion) {
+      const typeConfig = this.RUNTIME_CONFIG.CRITERION_TYPES[criterion.type];
+      if (!typeConfig) return "Unknown criterion";
+
+      const name = typeConfig.NAME;
+      const operator = typeConfig.OPERATORS[criterion.operator];
+      if (!operator) return "Unknown operator";
+
+      return `${name} ${operator} ${criterion.value}`;
+    },
+
+    /**
+     * Convert selection enum to a human readable text equivalent.
+     */
+    selectionTextRepresentation(selection) {
+      const selectionValue = this.RUNTIME_CONFIG.SELECTION_VALUES[selection];
+      if (!selectionValue) return "Unknown";
+
+      return selectionValue;
     },
 
     /**

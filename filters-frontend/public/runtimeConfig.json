@@ -20,7 +20,7 @@
                 "EQUALS": "equals",
                 "LESS_THAN": "less than"
             },
-            "FORMAT": "NUMBER",
+            "VALUE_FORMAT": "NUMBER",
             "DEFAULT_VALUE": 0
         },
         "TITLE": {
@@ -31,7 +31,7 @@
                 "CONTAINS": "contains",
                 "ENDS_WITH": "ends with"
             },
-            "FORMAT": "TEXT",
+            "VALUE_FORMAT": "TEXT",
             "DEFAULT_VALUE": ""
         },
         "DATE": {
@@ -40,7 +40,7 @@
                 "FROM": "from",
                 "UNTIL": "until"
             },
-            "FORMAT": "DATE",
+            "VALUE_FORMAT": "DATE",
             "DEFAULT_VALUE": null
         }
     }
