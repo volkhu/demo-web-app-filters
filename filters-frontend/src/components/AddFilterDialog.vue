@@ -211,7 +211,17 @@ export default {
       this.savingFilter = true;
 
       try {
-        await axios.post("/filters", this.filter);
+        // deep clone the filter object to make modifications before sending to server
+        let filter = JSON.parse(JSON.stringify(this.filter));
+
+        // remove unnecessary client side variables
+        filter.criteria.forEach((criterion, index) => {
+          // eslint-disable-next-line no-unused-vars
+          const { vueId, valueFormat, ...rest } = criterion;
+          filter.criteria[index] = rest;
+        });
+
+        await axios.post("/filters", filter);
         this.$emit("filter-saved");
       } catch (error) {
         alert(`Cannot save filter. ${error}`);
