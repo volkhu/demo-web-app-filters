@@ -109,6 +109,11 @@
       </v-container>
     </form>
     <v-progress-linear v-show="savingFilter" indeterminate></v-progress-linear>
+
+    <!-- Notification displayed when an error occurs during saving -->
+    <v-snackbar v-model="showErrorMessage" timeout="2000" color="error">
+      {{ errorMessage }}
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -128,6 +133,8 @@ export default {
     },
 
     savingFilter: false,
+    showErrorMessage: false,
+    errorMessage: null,
   }),
 
   methods: {
@@ -224,7 +231,8 @@ export default {
         await axios.post("/filters", filter);
         this.$emit("filter-saved");
       } catch (error) {
-        alert(`Cannot save filter. ${error}`);
+        this.errorMessage = `Cannot save filter. ${error}`;
+        this.showErrorMessage = true;
       }
 
       this.savingFilter = false;

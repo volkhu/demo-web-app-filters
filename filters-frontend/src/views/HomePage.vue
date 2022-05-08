@@ -60,6 +60,11 @@
         @filter-saved="onAddFilterDialogSaved"
       />
     </div>
+
+    <!-- Notification displayed when a filter is saved -->
+    <v-snackbar v-model="showSavedMessage" timeout="2000" color="success">
+      Filter successfully saved.
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -74,6 +79,7 @@ export default {
     isAddFilterDialogShown: false,
     areFiltersLoading: true,
     errorMessage: null,
+    showSavedMessage: false,
 
     headers: [
       { text: "Name", value: "name" },
@@ -151,6 +157,7 @@ export default {
      */
     onAddFilterDialogSaved() {
       this.closeAddFilterDialog();
+      this.showSavedMessage = true;
       this.loadFilters();
     },
   },
