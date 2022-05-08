@@ -37,27 +37,29 @@
       </v-data-table>
     </v-card>
 
-    <!-- Wrap the add filter dialog in Vuetify dialog box if modal mode is configured -->
-    <v-dialog
-      v-if="RUNTIME_CONFIG.MODAL_DIALOG"
-      v-model="isAddFilterDialogShown"
-      max-width="1200"
-      persistent
-    >
+    <div id="dialogArea">
+      <!-- Wrap the add filter dialog in Vuetify dialog box if modal mode is configured -->
+      <v-dialog
+        v-if="RUNTIME_CONFIG.MODAL_DIALOG"
+        v-model="isAddFilterDialogShown"
+        max-width="1200"
+        persistent
+      >
+        <add-filter-dialog
+          v-if="isAddFilterDialogShown"
+          @close-dialog="closeAddFilterDialog"
+          @filter-saved="onAddFilterDialogSaved"
+        />
+      </v-dialog>
+
+      <!-- Otherwise display just the dialog embedded in this page -->
       <add-filter-dialog
-        v-if="isAddFilterDialogShown"
+        v-else-if="isAddFilterDialogShown"
+        class="mt-3"
         @close-dialog="closeAddFilterDialog"
         @filter-saved="onAddFilterDialogSaved"
       />
-    </v-dialog>
-
-    <!-- Otherwise display just the dialog embedded in this page -->
-    <add-filter-dialog
-      v-else-if="isAddFilterDialogShown"
-      class="mt-3"
-      @close-dialog="closeAddFilterDialog"
-      @filter-saved="onAddFilterDialogSaved"
-    />
+    </div>
   </v-container>
 </template>
 
@@ -130,6 +132,10 @@ export default {
      */
     openAddFilterDialog() {
       this.isAddFilterDialogShown = true;
+
+      if (!this.RUNTIME_CONFIG.MODAL_DIALOG) {
+        this.$vuetify.goTo("#dialogArea");
+      }
     },
 
     /**
