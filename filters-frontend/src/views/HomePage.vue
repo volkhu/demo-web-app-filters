@@ -16,37 +16,25 @@
         </v-row>
       </v-card-title>
 
-      <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th class="text-left">Name</th>
-              <th class="text-left">Criteria</th>
-              <th class="text-left">Selection</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="filter in filters" :key="filter.id">
-              <td>{{ filter.name }}</td>
-              <td>
-                <!-- List every criterion of this filter as a bullet point -->
-                <ul class="pl-4 pt-2 pb-2">
-                  <li v-for="criterion in filter.criteria" :key="criterion.id">
-                    {{ criterionTextRepresentation(criterion) }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                {{ selectionTextRepresentation(filter.selection) }}
-              </td>
-            </tr>
-          </tbody>
+      <v-data-table
+        :headers="headers"
+        :items="filters"
+        :loading="areFiltersLoading"
+        :no-data-text="errorMessage ? errorMessage : $vuetify.noDataText"
+      >
+        <!-- List every criterion of this filter as a bullet point -->
+        <template v-slot:[`item.criteria`]="{ item }">
+          <ul>
+            <li v-for="criterion in item.criteria" :key="criterion.id">
+              {{ criterionTextRepresentation(criterion) }}
+            </li>
+          </ul>
         </template>
-      </v-simple-table>
-      <v-progress-linear
-        v-show="areFiltersLoading"
-        indeterminate
-      ></v-progress-linear>
+        <!-- Map selection enum to a text value -->
+        <template v-slot:[`item.selection`]="{ item }">
+          {{ selectionTextRepresentation(item.selection) }}
+        </template>
+      </v-data-table>
     </v-card>
 
     <!-- Wrap the add filter dialog in Vuetify dialog box if modal mode is configured -->
@@ -58,7 +46,6 @@
     >
       <add-filter-dialog
         v-if="isAddFilterDialogShown"
-        class="mt-3"
         @close-dialog="closeAddFilterDialog"
         @filter-saved="onAddFilterDialogSaved"
       />
@@ -84,7 +71,13 @@ export default {
   data: () => ({
     isAddFilterDialogShown: false,
     areFiltersLoading: true,
+    errorMessage: null,
 
+    headers: [
+      { text: "Name", value: "name" },
+      { text: "Criteria", value: "criteria" },
+      { text: "Selection", value: "selection" },
+    ],
     filters: [],
   }),
 
@@ -98,8 +91,10 @@ export default {
       try {
         const filtersResponse = await axios.get("/filters");
         this.filters = filtersResponse.data;
+        this.errorMessage = null;
       } catch (error) {
-        alert(`Cannot load filters. ${error}`);
+        this.filters = [];
+        this.errorMessage = `Cannot load filters. ${error}`;
       }
 
       this.areFiltersLoading = false;
