@@ -1,5 +1,6 @@
 package demo.web.app.filtersbackend.dto.criterion;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import demo.web.app.filtersbackend.dto.CriterionDto;
 import demo.web.app.filtersbackend.dto.type.CriterionType;
 import demo.web.app.filtersbackend.model.operator.DateComparisonOperator;
@@ -11,6 +12,7 @@ public class DateCriterionDto extends CriterionDto {
     @NotNull
     private DateComparisonOperator operator;
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date value;
 
     public DateCriterionDto() {
