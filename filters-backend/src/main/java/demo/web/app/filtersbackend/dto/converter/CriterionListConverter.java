@@ -12,7 +12,9 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CriterionListConverter extends AbstractConverter<List<Criterion>, List<CriterionDto>> {
 
@@ -38,6 +40,6 @@ public class CriterionListConverter extends AbstractConverter<List<Criterion>, L
             }
         }
 
-        return destination;
+        return destination.stream().sorted(Comparator.comparing(CriterionDto::getType)).collect(Collectors.toList());
     }
 }
