@@ -61,22 +61,22 @@
           <v-col cols="1"></v-col>
         </v-row>
 
-        <!-- Selection row -->
+        <!-- Match type row -->
         <v-row>
           <v-col cols="2" class="pl-0">
-            <v-subheader>Selection</v-subheader>
+            <v-subheader>Match type</v-subheader>
           </v-col>
           <v-col>
             <v-radio-group
               class="mt-2"
-              v-model="filter.selection"
+              v-model="filter.matchType"
               row
               dense
               hide-details="auto"
               :disabled="savingFilter"
             >
               <v-radio
-                v-for="(value, key) in RUNTIME_CONFIG.SELECTION_VALUES"
+                v-for="(value, key) in RUNTIME_CONFIG.MATCH_TYPES"
                 :key="key"
                 :label="value"
                 :value="key"
@@ -129,7 +129,7 @@ export default {
     filter: {
       name: null,
       criteria: [],
-      selection: null,
+      matchType: null,
     },
 
     savingFilter: false,
@@ -139,13 +139,13 @@ export default {
 
   methods: {
     /**
-     * Set add filter dialog's name and selection fields to their
+     * Set add filter dialog's name and match type fields to their
      * default values from the runtime config after it has been
      * loaded.
      */
     setFormDefaultValues() {
       this.filter.name = this.RUNTIME_CONFIG.DEFAULT_NAME;
-      this.filter.selection = this.RUNTIME_CONFIG.DEFAULT_SELECTION;
+      this.filter.matchType = this.RUNTIME_CONFIG.DEFAULT_MATCH_TYPE;
     },
 
     /**

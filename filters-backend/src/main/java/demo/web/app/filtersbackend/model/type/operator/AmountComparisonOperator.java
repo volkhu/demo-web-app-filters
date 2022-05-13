@@ -1,4 +1,4 @@
-package demo.web.app.filtersbackend.model.operator;
+package demo.web.app.filtersbackend.model.type.operator;
 
 public enum AmountComparisonOperator {
     GREATER_THAN,

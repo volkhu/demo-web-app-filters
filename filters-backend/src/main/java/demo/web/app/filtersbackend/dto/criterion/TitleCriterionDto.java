@@ -2,7 +2,7 @@ package demo.web.app.filtersbackend.dto.criterion;
 
 import demo.web.app.filtersbackend.dto.CriterionDto;
 import demo.web.app.filtersbackend.dto.type.CriterionType;
-import demo.web.app.filtersbackend.model.operator.TitleComparisonOperator;
+import demo.web.app.filtersbackend.model.type.operator.TitleComparisonOperator;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

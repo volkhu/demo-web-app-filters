@@ -3,7 +3,7 @@ package demo.web.app.filtersbackend.dto.criterion;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import demo.web.app.filtersbackend.dto.CriterionDto;
 import demo.web.app.filtersbackend.dto.type.CriterionType;
-import demo.web.app.filtersbackend.model.operator.DateComparisonOperator;
+import demo.web.app.filtersbackend.model.type.operator.DateComparisonOperator;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

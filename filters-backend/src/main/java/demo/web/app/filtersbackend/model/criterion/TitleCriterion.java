@@ -1,7 +1,7 @@
 package demo.web.app.filtersbackend.model.criterion;
 
 import demo.web.app.filtersbackend.model.Criterion;
-import demo.web.app.filtersbackend.model.operator.TitleComparisonOperator;
+import demo.web.app.filtersbackend.model.type.operator.TitleComparisonOperator;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

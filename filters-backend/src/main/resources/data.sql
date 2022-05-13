@@ -1,6 +1,6 @@
 -- Data for Name: filter; Type: TABLE DATA
-INSERT INTO filter (id, name, selection) VALUES (1, 'My Filter 1', 'SELECT_1') ON CONFLICT DO NOTHING;
-INSERT INTO filter (id, name, selection) VALUES (2, 'My Filter 2', 'SELECT_2') ON CONFLICT DO NOTHING;
+INSERT INTO filter (id, name, match_type) VALUES (1, 'My Filter 1', 'ANY') ON CONFLICT DO NOTHING;
+INSERT INTO filter (id, name, match_type) VALUES (2, 'My Filter 2', 'ALL') ON CONFLICT DO NOTHING;
 
 -- Data for Name: criterion; Type: TABLE DATA
 INSERT INTO criterion (id, filter_id) VALUES (1, 1) ON CONFLICT DO NOTHING;

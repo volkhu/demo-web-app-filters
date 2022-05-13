@@ -30,9 +30,9 @@
             </li>
           </ul>
         </template>
-        <!-- Map selection enum to a text value -->
-        <template v-slot:[`item.selection`]="{ item }">
-          {{ selectionTextRepresentation(item.selection) }}
+        <!-- Map match type enum to a text value -->
+        <template v-slot:[`item.matchType`]="{ item }">
+          {{ matchTypeTextRepresentation(item.matchType) }}
         </template>
       </v-data-table>
     </v-card>
@@ -84,7 +84,7 @@ export default {
     headers: [
       { text: "Name", value: "name" },
       { text: "Criteria", value: "criteria" },
-      { text: "Selection", value: "selection" },
+      { text: "Match type", value: "matchType" },
     ],
     filters: [],
   }),
@@ -124,13 +124,13 @@ export default {
     },
 
     /**
-     * Convert selection enum to a human readable text equivalent.
+     * Convert match type enum to a human readable text equivalent.
      */
-    selectionTextRepresentation(selection) {
-      const selectionValue = this.RUNTIME_CONFIG.SELECTION_VALUES[selection];
-      if (!selectionValue) return "Unknown";
+    matchTypeTextRepresentation(matchType) {
+      const matchTypeValue = this.RUNTIME_CONFIG.MATCH_TYPES[matchType];
+      if (!matchTypeValue) return "Unknown";
 
-      return selectionValue;
+      return matchTypeValue;
     },
 
     /**

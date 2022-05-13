@@ -1,6 +1,6 @@
 package demo.web.app.filtersbackend.model;
 
-import demo.web.app.filtersbackend.model.type.FilterSelection;
+import demo.web.app.filtersbackend.model.type.MatchType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -19,7 +19,7 @@ public class Filter {
     private List<Criterion> criteria;
     @NotNull
     @Enumerated(EnumType.STRING)
-    private FilterSelection selection;
+    private MatchType matchType;
 
     public Long getId() {
         return id;
@@ -37,12 +37,12 @@ public class Filter {
         this.name = name;
     }
 
-    public FilterSelection getSelection() {
-        return selection;
+    public MatchType getMatchType() {
+        return matchType;
     }
 
-    public void setSelection(FilterSelection selection) {
-        this.selection = selection;
+    public void setMatchType(MatchType matchType) {
+        this.matchType = matchType;
     }
 
     public List<Criterion> getCriteria() {
