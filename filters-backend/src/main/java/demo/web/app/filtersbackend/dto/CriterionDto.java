@@ -1,15 +1,25 @@
 package demo.web.app.filtersbackend.dto;
 
-import javax.validation.constraints.NotEmpty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import demo.web.app.filtersbackend.dto.criterion.AmountCriterionDto;
+import demo.web.app.filtersbackend.dto.criterion.DateCriterionDto;
+import demo.web.app.filtersbackend.dto.criterion.TitleCriterionDto;
+import demo.web.app.filtersbackend.dto.type.CriterionType;
 
+import javax.validation.constraints.NotNull;
+
+// Map subclasses to the type property for the deserializer
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = AmountCriterionDto.class, name = "AMOUNT"),
+    @JsonSubTypes.Type(value = TitleCriterionDto.class, name = "TITLE"),
+    @JsonSubTypes.Type(value = DateCriterionDto.class, name = "DATE")
+})
 public class CriterionDto {
     private Long id;
-    @NotEmpty
-    private String type;
-    @NotEmpty
-    private String operator;
-    @NotEmpty
-    private String value;
+    @NotNull
+    private CriterionType type;
 
     public Long getId() {
         return id;
@@ -19,27 +29,11 @@ public class CriterionDto {
         this.id = id;
     }
 
-    public String getType() {
+    public CriterionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CriterionType type) {
         this.type = type;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }

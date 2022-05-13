@@ -1,8 +1,10 @@
 package demo.web.app.filtersbackend.model;
 
-import demo.web.app.filtersbackend.model.type.Selection;
+import demo.web.app.filtersbackend.model.type.FilterSelection;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -10,11 +12,14 @@ public class Filter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
     private String name;
+    @NotEmpty
     @OneToMany(mappedBy = "filter")
     private List<Criterion> criteria;
+    @NotNull
     @Enumerated(EnumType.STRING)
-    private Selection selection;
+    private FilterSelection selection;
 
     public Long getId() {
         return id;
@@ -32,11 +37,11 @@ public class Filter {
         this.name = name;
     }
 
-    public Selection getSelection() {
+    public FilterSelection getSelection() {
         return selection;
     }
 
-    public void setSelection(Selection selection) {
+    public void setSelection(FilterSelection selection) {
         this.selection = selection;
     }
 

@@ -1,6 +1,6 @@
 package demo.web.app.filtersbackend.dto;
 
-import demo.web.app.filtersbackend.model.type.Selection;
+import demo.web.app.filtersbackend.model.type.FilterSelection;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -12,7 +12,7 @@ public class FilterDto {
     @NotEmpty
     private String name;
     @NotNull
-    private Selection selection;
+    private FilterSelection selection;
     @NotEmpty
     private List<@Valid CriterionDto> criteria;
 
@@ -32,11 +32,11 @@ public class FilterDto {
         this.name = name;
     }
 
-    public Selection getSelection() {
+    public FilterSelection getSelection() {
         return selection;
     }
 
-    public void setSelection(Selection selection) {
+    public void setSelection(FilterSelection selection) {
         this.selection = selection;
     }
 

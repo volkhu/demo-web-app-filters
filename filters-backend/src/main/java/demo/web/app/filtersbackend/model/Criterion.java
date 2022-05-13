@@ -1,10 +1,9 @@
 package demo.web.app.filtersbackend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Criterion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,9 +11,6 @@ public class Criterion {
     @ManyToOne
     @JoinColumn(name = "filter_id", nullable = false)
     private Filter filter;
-    private String type;
-    private String operator;
-    private String value;
 
     public Long getId() {
         return id;
@@ -22,30 +18,6 @@ public class Criterion {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public Filter getFilter() {

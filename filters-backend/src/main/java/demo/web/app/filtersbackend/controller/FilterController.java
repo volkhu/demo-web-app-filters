@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -23,19 +23,14 @@ public class FilterController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @RequestMapping(value="/filters", method=RequestMethod.GET)
+    @RequestMapping(value = "/filters", method = RequestMethod.GET)
     public List<FilterDto> readFilters() {
         List<Filter> filters = filterService.getFilters();
 
-        List<FilterDto> filterDtos = new ArrayList<>();
-        for (Filter filter : filters) {
-            filterDtos.add(modelMapper.map(filter, FilterDto.class));
-        }
-
-        return filterDtos;
+        return filters.stream().map(filter -> modelMapper.map(filter, FilterDto.class)).collect(Collectors.toList());
     }
 
-    @RequestMapping(value="/filters", method=RequestMethod.POST)
+    @RequestMapping(value = "/filters", method = RequestMethod.POST)
     public FilterDto createFilter(@Valid @RequestBody FilterDto filterDto) {
         Filter filterRequest = modelMapper.map(filterDto, Filter.class);
         Filter filter = filterService.createFilter(filterRequest);
