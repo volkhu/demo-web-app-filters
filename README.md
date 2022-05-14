@@ -6,6 +6,9 @@ Functionally, the application allows users to define filters with various associ
 # Front-end
 ![Filters page](/images/filters_page.png "Filters page")
 
+# Back-end
+![Database diagram](/images/database_diagram.png "Database diagram")
+
 # Features
 * View a list of filters with their criteria
 * Add and delete criteria for each filter
