@@ -1,7 +1,9 @@
-# demo-web-app-filters
-Demo web application displaying a list of user defined filters saved in an SQL database.
+# Filters
+This is a project showing Spring Boot used in combination with an SQL database and a modern front-end web framework to create a demo application and solve numerous design problems on the way.
 
-# Screenshot of the front-end
+Functionally, the application allows users to define filters with various associated criteria, save them in a persistent way and view all created filters in tabular format.
+
+# Front-end
 ![Filters page](/images/filters_page.png "Filters page")
 
 # Features
