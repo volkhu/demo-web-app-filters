@@ -41,7 +41,7 @@ ALTER TABLE ONLY title_criterion ADD CONSTRAINT title_criterion_pkey PRIMARY KEY
 CREATE TABLE filter (
     id bigint NOT NULL,
     match_type character varying(255) NOT NULL,
-    name character varying(255)
+    name character varying(64) NOT NULL
 );
 CREATE SEQUENCE filter_id_seq
     START WITH 1
