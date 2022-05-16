@@ -26,13 +26,31 @@ From the dialog users can specify parameters for the filter being created. All e
 * **Comparison operator** is specified in the second drop-down list. It will be used to compare the target field (chosen from the first drop-down) to a value in the third input box. Note that available values here depend on the selection in the first box and are updated dynamically as users change their choices. For example available operators for amount fields include 'greater than' and 'less than' whereas date fields allow 'from' and 'until'.
 * **Comparison value** is held in the third input box and its data type is also dependant on the first selection box. This is a numeric input for 'amount' criteria and a text field for 'title' criteria. A special case is the 'date' criteria which opens a pop-up date picker when clicking on the field.
 
-**Match type** determines how criteria will be used to filter data. The default option of 'all' means that every criterion must be true for a given item to satisfy the constraints of the filter. Similarly 'any' requires at least one of the criterions to be true and 'none' requires all criteria to be false. This setting is required and is treated as an enum throughout the code.
+**Match type** determines how criteria will be used to filter data. The default option of 'all' means that every criterion must be true for a given item to satisfy the constraints of the filter. Similarly 'any' requires at least one of the criteria to be true and 'none' requires all criteria to be false. This setting is required and is treated as an enum throughout the code.
 
 **Saving** is possible after required properties of the filter have been set. Clicking the save button sends a request to the back-end to create a new filter. During this the form inputs will be disabled and a progress bar will appear. Users will be notified of the saving process outcome with a Vuetify snackbar styled notification. In case of a failure, the data in the form will remain unchanged and the saving process may be attempted again. If the saving is successful, the dialog will be closed and the table of existing filters on the main page will be refreshed with new data from the back-end. Alternatively the dialog can be closed without saving by clicking the close button at the bottom or in the top right corner.
 
 ## Architecture
 
+The start point of the web app is in `src/main.js` which loads the JSON runtime config file over a web request and makes it available to Vue components via a mixin, before initializing the Vue instance.
+
+Source code for pages is located in `src/views` (currently only the home page) and their sub-components such as the add filter dialog in `src/components`.
+
 ## Configuration
+
+The application features a runtime configuration file at `src/public/runtimeConfig.json`, which sets the following parameters:  
+* `"API_BASE_URL": "http://localhost:8080/api"` - the base address of the API to which routes are appended when making requests.
+* `"MODAL_DIALOG": true` - whether to show the add filter dialog as a pop-up (modal) or part of the page (non-modal).
+* `"DEFAULT_NAME": ""` - default value for filter name on the add filter dialog.
+* `"DEFAULT_CRITERION_TYPE": "AMOUNT"` - default selection for criterion type on the add filter dialog.
+* `"DEFAULT_MATCH_TYPE": "ALL"` - default selection for match type on the add filter dialog.
+* `"CRITERION_TYPES": { ... }` - key-value pairs defining available criterion types and their properties.
+    * `"AMOUNT": { ... }` - properties for specified criteria type. Defined are `AMOUNT`, `TITLE` and `DATE`.
+        * `"NAME": "Amount"` - human-readable identifier.
+        * `"OPERATORS": { ... }` - key-value pairs defining available comparison operators and their names, for example `"GREATER_THAN": "greater than"`.
+        * `"VALUE_FORMAT": "NUMBER"` - data type being compared. `NUMBER`, `TEXT` and `DATE` are available.
+        * `"DEFAULT_VALUE": 0` - default setting for the comparison value field.
+* `"MATCH_TYPES": { ... }` - key-value pairs specifying possible filter match type values, e.g. `"ALL": "All"`.
 
 ## Installation
 
