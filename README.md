@@ -11,17 +11,15 @@ The front-end is realized as a single-page Vue.js application with styling provi
 
 ## Functionality
 
-Screenshot of the web page that users can interact with:
+**Filters table** is the main focus of the page and contains existing filters with their properties. This data is fetched from the back-end when the web page is loaded. While the filters are loading, a progress bar is displayed with an accompanying message. If the loading were to fail for any reason, an error message will be shown in the table. Likewise, users will be notified in case there is no data to show.
 
 ![Filters table](/images/filters_table.png "Filters table")
 
-**Filters table** is the main focus of the page and contains existing filters with their properties. This data is fetched from the back-end when the web page is loaded. While the filters are loading, a progress bar is displayed with an accompanying message. If the loading were to fail for any reason, an error message will be shown in the table. Likewise, users will be notified in case there is no data to show.
-
 There are three columns in the table that are sortable by clicking on the corresponding header: name of the filter, criteria associated with it, and the match type. These properties are explained in the add filter section. By default only the first 10 filters are visible, but users can increase or decrease this value from the drop-down list below the table. Next to that are buttons for navigating through pages of the table.
 
-![Add filter dialog](/images/add_filter_dialog.png "Add filter dialog")
+**Add filter dialog** can be opened with the button in the top right corner. It will be disabled while the dialog is open to prevent multiple copies from being created. Users' browser window will be scrolled to the created dialog if it is out of view. The dialog itself can be in one of two modes: modal and non-modal, which can be set in runtime configuration. The screen capture below shows the non-modal variant, which does not require immediate user attention. Content of the modal version is identical, but stops users from interacting with the rest of the page until the pop-up dialog is closed.
 
-**Add filter dialog** can be opened with the button in the top right corner. It will be disabled while the dialog is open to prevent multiple copies from being created. Users' browser window will be scrolled to the created dialog if it is out of view. The dialog itself can be in one of two modes: modal and non-modal, which can be set in runtime configuration. The screen capture above shows the non-modal variant, which does not require immediate user attention. Content of the modal version is identical, but stops users from interacting with the rest of the page until the pop-up dialog is closed.
+![Add filter dialog](/images/add_filter_dialog.png "Add filter dialog")
 
 From the dialog users can specify parameters for the filter being created. All entered data is validated and users asked to correct errors before sending any save requests to the back-end. Predefined options for drop-down lists and radio buttons along with default options are loaded from runtime config.
 
@@ -124,7 +122,19 @@ As evident, one filter can contain many criteria. Criterion is defined as a base
 
 ## Configuration
 
+The back-end can be run with multiple profiles and there are different config files for each. Profiles can be chosen by setting the `spring_profiles_active` environment variable to `dev` or `prod`.
 
+**Development profile** settings are located in `src/main/resources/application-dev.properties`:
+* `spring.datasource.initialization-mode=always` - populate the database with initial data at every startup.
+* `spring.datasource.data=classpath:data-dev.sql` - specify the SQL file containing said data.
+* `spring.jpa.hibernate.ddl-auto=update` - create database schema from JPA entities and update automatically when changes are made.
+* `spring.jpa.defer-datasource-initialization=true` - wait until Hibernate has created the database schema before loading the initial data.
+
+**Production profile** settings are located in `src/main/resources/application-prod.properties`:
+* `spring.jpa.hibernate.ddl-auto=validate` - verify that the correct schema exists in the database at application startup, since in this profile it must be created by manually importing the `schema-prod.sql` file from the same folder. This is derived from the automatically created dev profile schema.
+
+Both configuration files define database credentials and also allowed CORS origins as such:
+* `filters.cors.allowed-origins=http://localhost:3000,http://192.168.1.2:3000`
 
 ## Installation
 
