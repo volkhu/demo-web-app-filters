@@ -3,6 +3,8 @@ This is a project showing Spring Boot used in combination with an SQL database a
 
 Functionally, the application allows users to define filters with various associated criteria, save them in a persistent way and view all created filters in tabular format.
 
+The project's front- and back-end are stored together here as a monorepo to present them in a single location.
+
 # Front-end
 The front-end is realized as a single-page Vue.js application with styling provided by Vuetify. Even though Vue 3 is already the default option at the time of writing this, Vuetify still does not support it, so version 2 is used instead. The language of choice is JavaScript and communication with the back-end is done via JSON messages over a REST API using the Axios library. Much of the application behavior can be changed in a configuration file referenced at runtime without rebuilding the app.
 ## Functionality
@@ -53,6 +55,17 @@ The application features a runtime configuration file at `src/public/runtimeConf
 * `"MATCH_TYPES": { ... }` - key-value pairs specifying possible filter match type values, e.g. `"ALL": "All"`.
 
 ## Installation
+
+1. Ensure that Node.js including npm is installed.
+2. Go to the `filters-frontend` directory.
+3. Run the `npm install` command to setup the project.
+4. Open `src/public/runtimeConfig.json` and set `API_BASE_URL` to your back-end endpoint.
+5. Start the development version of the app by running `npm run serve`.
+6. Visit the displayed URL like `http://localhost:3000/` and verify the app.
+7. Build the production version by issuing `npm run build`.
+8. Go to the `dist` directory containing the built files.
+9. Make any changes to `runtimeConfig.json` there if necessary.
+10. Deploy the contents of the `dist` folder.
 
 # Back-end
 
