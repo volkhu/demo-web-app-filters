@@ -3,11 +3,14 @@ This is a project showing Spring Boot used in combination with an SQL database a
 
 Functionally, the application allows users to define filters with various associated criteria, save them in a persistent way and view all created filters in tabular format.
 
-The project's front- and back-end are stored together here as a monorepo to present them in a single location.
+The project's front- and back-end are stored together here as a monorepo to present them in a single location. This work is under MIT license.
 
 # Front-end
+
 The front-end is realized as a single-page Vue.js application with styling provided by Vuetify. Even though Vue 3 is already the default option at the time of writing this, Vuetify still does not support it, so version 2 is used instead. The language of choice is JavaScript and communication with the back-end is done via JSON messages over a REST API using the Axios library. Much of the application behavior can be changed in a configuration file referenced at runtime without rebuilding the app.
+
 ## Functionality
+
 Screenshot of the web page that users can interact with:
 
 ![Filters page](/images/filters_page.png "Filters page")
@@ -54,6 +57,8 @@ The application features a runtime configuration file at `src/public/runtimeConf
         * `"DEFAULT_VALUE": 0` - default setting for the comparison value field.
 * `"MATCH_TYPES": { ... }` - key-value pairs specifying possible filter match type values, e.g. `"ALL": "All"`.
 
+Additionally, the development server is customized to run on port 3000 to avoid conflicts. This can be changed by editing the `"serve": "vue-cli-service serve --port 3000"` line in `package.json`.
+
 ## Installation
 
 1. Ensure that Node.js including npm is installed.
@@ -61,24 +66,64 @@ The application features a runtime configuration file at `src/public/runtimeConf
 3. Run the `npm install` command to setup the project.
 4. Open `src/public/runtimeConfig.json` and set `API_BASE_URL` to your back-end endpoint.
 5. Start the development version of the app by running `npm run serve`.
-6. Visit the displayed URL like `http://localhost:3000/` and verify the app.
-7. Build the production version by issuing `npm run build`.
-8. Go to the `dist` directory containing the built files.
-9. Make any changes to `runtimeConfig.json` there if necessary.
-10. Deploy the contents of the `dist` folder.
+6. Visit the shown URL like `http://localhost:3000/` and verify the app.
+7. Build the compiled version by issuing `npm run build`.
+8. Go to the created `dist` directory containing the built files.
+9. Make further changes to `runtimeConfig.json` in that folder if necessary.
+10. Deploy the contents of the `dist` folder to a web server.
 
 # Back-end
 
+The back-end is based on Spring Boot and written in Java. Data is stored in a PostgreSQL database.
+
 ## Functionality
+
+**The API** handles filters as JSON objects with the following structure:
+```
+{
+    "id": 3,
+    "name": "New Filter from UI",
+    "matchType": "ALL",
+    "criteria": [
+        {
+            "id": 4,
+            "type": "AMOUNT",
+            "operator": "GREATER_THAN",
+            "value": 4
+        },
+        ...
+    ]
+}
+```
+where the `criteria` array can contain criteria objects of type. Appropriate conversions are applied on both client and server side based on the `type` field. This also allows for simple verification that the criterion list is not empty.
+
+**Requests** are accepted on two routes:
+* `GET /filters` responds with a JSON array of all filters in the database. The response is an empty array if there is none.
+* `POST /filters` expects a single filter in JSON notation without the id field, as that will be generated when the filter is saved to the database. The server will respond with the full details of the created filter including the id. All fields are validated. If the client provides invalid data, 400 Bad Request code is returned instead.
 
 ## Architecture
 
-Database diagram generated using SchemaCrawler and Graphviz:
+**Structure** of the back-end is divided into numerous packages:
+* `config` - classes responsible for configuring e.g. the model mapper or CORS.
+* `controller` - handling the actual routes that clients use.
+* `dto` - data transfer objects to decouple internal entities from the exposed API. Model mapper with custom converters is used to map between these.
+* `model` - internal entities representing data as stored in the database.
+* `repository` and `service` - storing and retrieving entities in various ways.
+
+**Database** diagram generated using SchemaCrawler and Graphviz:
 
 ![Database diagram](/images/database_diagram.png "Database diagram")
 
 (command used: `./schemacrawler --server=postgresql --host=localhost --port=5432 --user=postgres --password=postgrespw --database=postgres --command=schema --output-format=png --output-file=database_diagram.png --info-level=standard --portable-names`)
 
+As evident, one filter can contain many criteria. Criterion is defined as a base entity from which various criteria with different data types inherit from. Chosen inheritance strategy is JOINED, meaning each sub-class has its own table that does not contain its parent's fields, but rather references to an entry in the parent (base) table. This guarantees an unique ID for each criterion while also allowing different data types for different criteria.
+
+**Unit tests** can be found in `src/test`. Most notable are the tests that verify conversions between entities and DTOs, ensuring their properties get carried over properly in either direction.
+
 ## Configuration
 
+
+
 ## Installation
+
+
