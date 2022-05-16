@@ -24,7 +24,7 @@
       >
         <!-- List every criterion of this filter as a bullet point -->
         <template v-slot:[`item.criteria`]="{ item }">
-          <ul>
+          <ul class="pl-3">
             <li v-for="criterion in item.criteria" :key="criterion.id">
               {{ criterionTextRepresentation(criterion) }}
             </li>
