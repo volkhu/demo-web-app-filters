@@ -5,6 +5,7 @@ import demo.web.app.filtersbackend.model.type.MatchType;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -13,6 +14,8 @@ public class Filter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty
+    @Size(max = 64)
+    @Column(nullable = false, length = 64)
     private String name;
     @NotEmpty
     @OneToMany(mappedBy = "filter")
