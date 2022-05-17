@@ -61,7 +61,7 @@ Additionally, the development server is customized to run on port 3000 to avoid 
 
 ## Installation
 
-1. Ensure that Node.js including npm is installed.
+1. Ensure that Node.js including npm is installed. Version 16 was used for development.
 2. Go to the `filters-frontend` directory.
 3. Run the `npm install` command to setup the project.
 4. Open `src/public/runtimeConfig.json` and set `API_BASE_URL` to your back-end endpoint.
@@ -116,19 +116,19 @@ where the `criteria` array can contain criteria objects of type. Appropriate con
 
 (command used: `./schemacrawler --server=postgresql --host=localhost --port=5432 --user=postgres --password=postgrespw --database=postgres --command=schema --output-format=png --output-file=database_diagram.png --info-level=standard --portable-names`)
 
-As evident, one filter can contain many criteria. Criterion is defined as a base entity from which various criteria with different data types inherit from. Chosen inheritance strategy is JOINED, meaning each sub-class has its own table that does not contain its parent's fields, but rather references to an entry in the parent (base) table. This guarantees an unique ID for each criterion while also allowing different data types for different criteria.
+As evident, one filter can contain many criteria. Criterion is defined as a base entity from which various criteria with different data types inherit from. Chosen inheritance strategy is JOINED, meaning each sub-class has its own table that does not contain its parent's fields, but rather references to an entry in the parent (base) table. This guarantees an unique ID for each criterion while also allowing different data types for different criteria. Varchar fields `match_type` and `operator` are representing Java enums in a string format.
 
 **Unit tests** can be found in `src/test`. Most notable are the tests that verify conversions between entities and DTOs, ensuring their properties get carried over properly in either direction.
 
 ## Configuration
 
-The back-end can be run with multiple profiles and there are different config files for each. Profiles can be chosen by setting the `spring_profiles_active` environment variable to `dev` or `prod`.
+The back-end can be run with multiple profiles and there are different config files for each. Profiles can be chosen by setting the `SPRING_PROFILES_ACTIVE` environment variable to `dev` or `prod`.
 
 **Development profile** settings are located in `src/main/resources/application-dev.properties`:
 * `spring.datasource.initialization-mode=always` - populate the database with initial data at every startup.
 * `spring.datasource.data=classpath:data-dev.sql` - specify the SQL file containing said data.
 * `spring.jpa.hibernate.ddl-auto=update` - create database schema from JPA entities and update automatically when changes are made.
-* `spring.jpa.defer-datasource-initialization=true` - wait until Hibernate has created the database schema before loading the initial data.
+* `spring.jpa.defer-datasource-initialization=true` - wait until Hibernate has created the database schema before loading initial data.
 
 **Production profile** settings are located in `src/main/resources/application-prod.properties`:
 * `spring.jpa.hibernate.ddl-auto=validate` - verify that the correct schema exists in the database at application startup, since in this profile it must be created by manually importing the `schema-prod.sql` file from the same folder. This is derived from the automatically created dev profile schema.
@@ -138,4 +138,20 @@ Both configuration files define database credentials and also allowed CORS origi
 
 ## Installation
 
-
+1. Make sure that a JDK is installed. OpenJDK 18 was used for development.
+2. Ensure that the `JAVA_HOME` environment variable is set to the JDK directory.
+3. Open the `filters-backend` folder.
+4. Run `./mvnw clean install` to setup the project via the included Maven wrapper. This also runs unit tests and compiles the application.
+5. Set `SPRING_PROFILES_ACTIVE` environment variable to `dev` to select the development version of the application. In PowerShell this can be done with `$env:SPRING_PROFILES_ACTIVE="dev"`.
+6. Open `src/main/resources/application-dev.properties` and set desired PostgreSQL database credentials on lines 2-4.
+7. Additionally set `filters.cors.allowed-origins` to the front-end URL where requests should be allowed from.
+8. Run the application by executing `./mvnw spring-boot:run`. By default it is initialized on port 8080. At this step the previously specified database is automatically initialized with a schema and sample data.
+9. Verify that the server is working by testing the front-end or using a REST client such as Insomnia. For example `GET http://localhost:8080/api/filters` (or another equivalent URL) should now be reachable.
+10. Close the server and set `SPRING_PROFILES_ACTIVE` environment variable to `prod` to activate the production profile.
+11. Configure production database credentials in `src/main/resources/application-prod.properties` on lines 2-4.
+12. Set allowed CORS origins in `filters.cors.allowed-origins`.
+13. Manually import `src/main/resources/schema-prod.sql` to the chosen production database.
+14. Package the application using `./mvnw clean package spring-boot:repackage`.
+15. Deploy the JAR file created in the `target` directory.
+16. Optionally a copy of `application-prod.properties` can be put into the same directory or into a `config` subfolder to change parameters without rebuilding the JAR.
+17. Run the server with `java -jar filters-backend-1.0.jar` or equivalent. As configured it will validate the imported schema on startup.
