@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>demo.web.app</groupId>
 	<artifactId>filters-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>filters</name>
 	<description>Demo filters web application backend</description>
 	<properties>
