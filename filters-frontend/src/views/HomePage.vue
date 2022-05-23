@@ -69,8 +69,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import AddFilterDialog from "@/components/AddFilterDialog.vue";
+import { getFilters } from "@/services/filterService";
 
 export default {
   components: { AddFilterDialog },
@@ -97,8 +97,7 @@ export default {
       this.areFiltersLoading = true;
 
       try {
-        const filtersResponse = await axios.get("/filters");
-        this.filters = filtersResponse.data;
+        this.filters = await getFilters();
         this.errorMessage = null;
       } catch (error) {
         this.filters = [];

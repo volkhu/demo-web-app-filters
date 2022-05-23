@@ -119,8 +119,8 @@
 
 <script>
 import _ from "lodash";
-import axios from "axios";
 import CriterionRow from "./CriterionRow.vue";
+import { saveFilter } from "@/services/filterService";
 
 export default {
   components: { CriterionRow },
@@ -218,17 +218,7 @@ export default {
       this.savingFilter = true;
 
       try {
-        // deep clone the filter object to make modifications before sending to server
-        let filter = JSON.parse(JSON.stringify(this.filter));
-
-        // remove unnecessary client side variables
-        filter.criteria.forEach((criterion, index) => {
-          // eslint-disable-next-line no-unused-vars
-          const { vueId, valueFormat, ...rest } = criterion;
-          filter.criteria[index] = rest;
-        });
-
-        await axios.post("/filters", filter);
+        await saveFilter(this.filter);
         this.$emit("filter-saved");
       } catch (error) {
         this.errorMessage = `Cannot save filter. ${error}`;
