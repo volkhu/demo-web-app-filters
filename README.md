@@ -99,7 +99,7 @@ where the `criteria` array can contain criteria objects of type. Appropriate con
 
 **Requests** are accepted on two routes:
 * `GET /filters` responds with a JSON array of all filters in the database. The response is an empty array if there is none.
-* `POST /filters` expects a single filter in JSON notation without the id field, as that will be generated when the filter is saved to the database. The server will respond with the full details of the created filter including the id. All fields are validated. If the client provides invalid data, 400 Bad Request code is returned instead.
+* `POST /filters` expects a single filter in JSON notation without the id field, as that will be generated when the filter is saved to the database. The server will respond with the full details of the created filter including the id. All fields are validated. If the client provides invalid data, 400 Bad Request code is returned instead with a list of unsuitable fields and related explanations.
 
 ## Architecture
 
