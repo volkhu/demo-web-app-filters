@@ -37,7 +37,7 @@ From the dialog users can specify parameters for the filter being created. All e
 
 ## Architecture
 
-The start point of the web app is in `src/main.js` which loads the JSON runtime config file over a web request and makes it available to Vue components via a mixin, before initializing the Vue instance.
+The start point of the web app is in `src/main.js` which loads the JSON runtime config file over a web request and makes it available to Vue components via a mixin, before initializing the Vue instance. Code for mixins is in `src/mixins`.
 
 Source code for pages is located in `src/views` and their sub-components such as the add filter dialog in `src/components`. Calls to the back-end are handled through a filter service in `src/services`.
 
